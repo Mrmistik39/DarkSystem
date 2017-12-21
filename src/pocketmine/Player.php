@@ -1975,6 +1975,9 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 				$this->originalProtocol = $packet->originalProtocol;
 				$this->identityPublicKey = $packet->identityPublicKey;
 				$this->sendLoginSuccess();
+				if(!$packet->validSkinData){
+					$this->close('Invalid skin data provided!', 'Your skin data are not valid');
+				}
 				break;
 			case "MOVE_PLAYER_PACKET":
 				$newPos = new Vector3($packet->x, $packet->y - $this->getEyeHeight(), $packet->z);
