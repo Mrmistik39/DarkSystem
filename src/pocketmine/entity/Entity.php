@@ -1789,7 +1789,11 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	public function getId(){
 		return $this->id;
 	}
-
+	
+	public function getLoaderId(){
+		return $this->id;
+	}
+	
 	public function respawnToAll(){
 		foreach($this->hasSpawned as $key => $player){
 			unset($this->hasSpawned[$key]);

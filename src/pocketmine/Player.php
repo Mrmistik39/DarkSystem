@@ -1717,17 +1717,19 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 						$this->elytraActivated = false;
 					}
 				}else{
-					$anticheat = false; //TODO: Add config
-					if(!$this->isUseElytra() && !$this->allowFlight && !$this->isSleeping()){
-						$expectedVelocity = (-$this->gravity) / $this->drag - ((-$this->gravity) / $this->drag) * exp(-$this->drag * ($this->inAirTicks - $this->startAirTicks));
-						$diff = ($this->speed->y - $expectedVelocity) ** 2;
-						if(!$this->hasEffect(Effect::JUMP) && $diff > 0.6 && $expectedVelocity < $this->speed->y && !$this->server->getAllowFlight() && !$this->getDataFlag(Player::DATA_FLAGS, Player::DATA_FLAG_NOT_MOVE) && $anticheat){
-							if($this->getPlayerProtocol() > ProtocolInfo::PROTOCOL_120 && !(PHP_INT_SIZE === 8 && $this->allowFlight) && $this->inAirTicks < 1000){
-								$this->setMotion(new Vector3(0, $expectedVelocity, 0));
-							}
-						}
-						++$this->inAirTicks;
-					}
+					if(!$this->isUseElytra() && !$this->flying && $this->inAirTicks > 10 && !$this->isSleeping() && $this->speed instanceof Vector3){
+                        $expectedVelocity = (-$this->gravity) / $this->drag - ((-$this->gravity) / $this->drag) * exp(-$this->drag * ($this->inAirTicks - $this->startAirTicks));
+                        $diff = ($this->speed->y - $expectedVelocity) ** 2;
+                        if(!$this->hasEffect(Effect::JUMP) && !$this->hasEffect(Effect::LEVITATION) && $diff > 0.6 && $expectedVelocity < $this->speed->y && !$this->server->getAllowFlight()){
+                            if(!(PHP_INT_SIZE === 8 && $this->allowFlight) && $this->inAirTicks < 1000){
+                                $this->setMotion(new Vector3(0, $expectedVelocity, 0));
+                            }elseif(!$this->allowFlight){
+                            	$this->kick("Flying is not enabled");
+                                return false;
+                            }
+                        }
+                    }
+                    ++$this->inAirTicks;
 				}
 			}
 			if($this->starvationTick >= 20 && !$this->server->getDifficulty() === 3){

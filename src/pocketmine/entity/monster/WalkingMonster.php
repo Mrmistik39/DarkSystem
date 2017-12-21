@@ -3,6 +3,7 @@
 namespace pocketmine\entity\monster;
 
 use pocketmine\entity\monster\walking\Enderman;
+use pocketmine\entity\monster\jumping\MagmaCube;
 use pocketmine\entity\WalkingEntity;
 use pocketmine\block\Water;
 use pocketmine\entity\Effect;
@@ -140,7 +141,7 @@ abstract class WalkingMonster extends WalkingEntity implements Monster{
 		$hasUpdate = parent::entityBaseTick($tickDiff);
 
 		$this->attackDelay += $tickDiff;
-		if($this instanceof Enderman){
+		if($this instanceof Enderman || $this instanceof MagmaCube){
 			if($this->level->getBlock(new Vector3(Math::floorFloat($this->x), (int) $this->y, Math::floorFloat($this->z))) instanceof Water){
 				$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_DROWNING, 2);
 				$this->attack($ev->getFinalDamage(), $ev);
