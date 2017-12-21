@@ -1780,13 +1780,13 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			}
 			$this->checkChunks();
 		}
-		if(count($this->messageQueue) > 0){
+		/*if(count($this->messageQueue) > 0){
 			$message = array_shift($this->messageQueue);
 			$pk = new TextPacket();
 			$pk->type = TextPacket::TYPE_RAW;
 			$pk->message = $message;
 			$this->dataPacket($pk);
-		}
+		}*/
 		if(count($this->noteSoundQueue) > 0){
 			$noteId = array_shift($this->noteSoundQueue);
 			$this->sendNoteSound($noteId);
@@ -2758,9 +2758,9 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			case "COMMAND_REQUEST_PACKET":
 				if($packet->command[0] !== "/"){
 					if(Translate::checkTurkish() === "yes"){
-						$this->sendMessage(TF::RED . "Bilinmeyen Komut!");
+						$this->(TF::RED . "Bilinmeyen Komut!");
 					}else{
-						$this->sendMessage(TF::RED . "Unknown Command!");
+						$this->(TF::RED . "Unknown Command!");
 					}
 					break;
 				}
@@ -2923,23 +2923,17 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 	
 	public function sendMessage($message, $isUsePrefix = false){
 		$prefix = TF::GRAY . "»" . TF::SPACE . TF::RESET;
-		if($message instanceof TextContainer){
-			if($message instanceof TranslationContainer){
-				if($isUsePrefix){
-					$this->sendTranslation($prefix . $message->getText(), $message->getParameters());
-				}else{
-					$this->sendTranslation($message->getText(), $message->getParameters());
-				}
-				return false;
-			}
-			$message = $message->getText();
+		if($message instanceof TranslationContainer){
+	        if($isUsePrefix){
+		    $message = $prefix . $this->server->getLanguage()->translateString($message->getText());
+		}else{	
+		    $message = $this->server->getLanguage()->translateString($message->getText());
 		}
-		if($isUsePrefix){
-			$this->messageQueue[] = $prefix . $this->server->getLanguage()->translateString($message);
-		}else{
-			$this->messageQueue[] = $this->server->getLanguage()->translateString($message);
+		$pk = new TextPacket();
+		$pk->type = TextPacket::TYPE_RAW;
+		$pk->message = $message;
+		$this->dataPacket($pk);
 		}
-		return true;
 	}
 	
 	public function sendChatMessage($senderName, $message){
@@ -4177,7 +4171,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		unset($this->hiddenEntity[$entity->getId()]);
 		
 		if($entity !== $this && !$entity->closed && !$entity->dead){
-			$entity->spawnTo($this);
+		$entity->spawnTo($this);
 		}
         return true;
 	}
@@ -4200,7 +4194,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		}
 
 		$target = $this->level->getEntity($targetId);
-		if($target instanceof Player && ($this->server->getConfigBoolean("pvp", true) === false || ($target->getGamemode() & 0x01) > 0)){
+		if($target instanceof Player && ($target->getGamemode() & 0x01) > 0)){
 			$this->attackInCreative($this);
 			return true;
 		}
@@ -4304,7 +4298,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			return false;
 		}
 		
-		if($item->isTool() && $this->isLiving()){
+		if($item->isTool() && $this->isLiving() && !$item->closed){
 			if($item->useOn($target) && $item->getDamage() >= $item->getMaxDurability()){
 				$this->inventory->setItemInHand(Item::get(Item::AIR, 0, 1));
 			}elseif($this->inventory->getItemInHand()->getId() === $item->getId()){
