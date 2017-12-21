@@ -33,6 +33,7 @@ class LoginPacket extends PEPacket{
 	//public $skinGeometryId = "";
 	public $skinGeometryData = "";
 	public $capeData = "";
+	public $validSkinData = true;
 	public $chainsDataLength;
 	public $chains;
 	public $playerDataLength;
@@ -117,6 +118,9 @@ class LoginPacket extends PEPacket{
 		$this->skinName = $this->playerData['SkinId'];
 		//$this->skinId = $this->playerData['SkinName'];
 		$this->skin = base64_decode($this->playerData['SkinData']);
+		if(strtlen($this->skin) !== 8192 || strlen($this->skin) == !16384){
+		    $this->validSkinData = false;
+		}
 		if(isset($this->playerData['SkinGeometryName'])){
             $this->skinGeometryName = $this->playerData['SkinGeometryName'];
         }
