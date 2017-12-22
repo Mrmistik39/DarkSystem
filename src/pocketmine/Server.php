@@ -1582,9 +1582,7 @@ class Server extends DarkSystem{
 			
 			$this->forceLanguage = $this->getProperty("settings.force-language", true);
 			$this->language = new Language($this->getProperty("settings.language", Language::FALLBACK_LANGUAGE));
-			
-			$this->stranslator = new StringTranslator($this->getProperty("settings.language", Language::FALLBACK_LANGUAGE));
-			
+            
 			if(($poolSize = $this->getProperty("settings.async-workers", "auto")) === "auto"){
 				$poolSize = ServerScheduler::$WORKERS;
 				$processors = Utils::getCoreCount() - 2;
