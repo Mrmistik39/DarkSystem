@@ -2761,9 +2761,9 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			case "COMMAND_REQUEST_PACKET":
 				if($packet->command[0] !== "/"){
 					if(Translate::checkTurkish() === "yes"){
-						$this->(TF::RED . "Bilinmeyen Komut!");
+						$this->sendMessage(TF::RED . "Bilinmeyen Komut!");
 					}else{
-						$this->(TF::RED . "Unknown Command!");
+						$this->sendMessage(TF::RED . "Unknown Command!");
 					}
 					break;
 				}
