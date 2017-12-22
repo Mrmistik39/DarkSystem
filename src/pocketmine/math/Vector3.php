@@ -177,7 +177,7 @@ class Vector3{
 
 	public function maxPlainDistance($x = 0, $z = 0){
 		if($x instanceof Vector3){
-			return max(abs($this->x - $x->x), abs($this->z - $z->z));
+			return max(abs($this->x - $x->x), abs($this->z - $x->z));
 		}elseif($x instanceof Vector2){
 			return max(abs($this->x - $x->x), abs($this->z - $x->y));
 		}else{
