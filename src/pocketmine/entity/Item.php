@@ -169,10 +169,7 @@ class Item extends Entity{
 	public function getItem(){
 		return $this->item;
 	}
-	
-	public function getId(){
-		return $this->item->getId();
-	}
+    
 	
 	public function isAir(){
 		return $this->item->isAir();
