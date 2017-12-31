@@ -12,14 +12,13 @@
 namespace darksystem;
 
 use pocketmine\Server;
-use darksystem\darkbot\entity\NPC;
-use pocketmine\entity\{Entity, ArmorStand, BlazeFireball, BlueWitherSkull, Boat, Camera, Car, Chalkboard, Item as DroppedItem, EnderCrystal, EnderPearl, FallingSand, FishingHook, FloatingText, GhastFireball, LeashKnot, Lightning, Minecart, MinecartChest, MinecartCommandBlock, MinecartHopper, MinecartTNT, NPCHuman, Painting, PrimedTNT, ShulkerBullet, ThrownExpBottle, ThrownPotion, XPOrb, Herobrine, Human, Dragon, ElderGuardian, EnderDragon, Endermite, EvocationFangs, Giant, Guardian, Illusioner, LavaSlime, LearnToCodeMascot, Llama, PolarBear, Shulker, Slime, SkeletonHorse, Squid, Vindicator, Witch, Wither, WitherSkeleton, ZombieHorse};
-use pocketmine\entity\animal\walking\{Chicken, Cow, Donkey, Horse, Mooshroom, Mule, Ocelot, Pig, Rabbit, Sheep, Villager};
+use pocketmine\entity\{Entity, ArmorStand, BlazeFireball, BlueWitherSkull, Boat, Camera, Car, Chalkboard, Item as DroppedItem, EnderCrystal, EnderPearl, FallingSand, FishingHook, FloatingText, GhastFireball, LeashKnot, Lightning, Minecart, MinecartChest, MinecartCommandBlock, MinecartHopper, MinecartTNT, NPCHuman, Painting, PrimedTNT, ShulkerBullet, ThrownExpBottle, ThrownPotion, XPOrb, Herobrine, Human, Dragon, ElderGuardian, EnderDragon, Endermite, EvocationFangs, Giant, Guardian, Illusioner, LavaSlime, LearnToCodeMascot, PolarBear, Shulker, Slime, SkeletonHorse, Squid, Vindicator, Witch, Wither, WitherSkeleton, ZombieHorse};
+use pocketmine\entity\animal\walking\{Chicken, Cow, Donkey, Horse, Llama, Mooshroom, Mule, Ocelot, Pig, Rabbit, Sheep, Villager};
 use pocketmine\entity\animal\flying\{Bat, Parrot};
 use pocketmine\entity\monster\flying\{Blaze, Ghast, Vex};
 use pocketmine\entity\monster\jumping\{MagmaCube/*, Slime*/};
 use pocketmine\entity\monster\walking\{CaveSpider, Creeper, Enderman, Husk, IronGolem, PigZombie, Silverfish, Skeleton, SnowGolem, Spider, Stray, Wolf, Zombie, ZombieVillager};
-use pocketmine\entity\projectile\{Arrow, Egg, FireBall, FireworksRocket, Snowball};
+use pocketmine\entity\projectile\{Arrow, Egg, FireBall, FireworkRocket, Snowball};
 use pocketmine\inventory\customInventory\CustomChest;
 use pocketmine\tile\{Tile, Banner, Beacon, Bed, BrewingStand, Cauldron, Chest, CommandBlock, Dispenser, DLDetector, Dropper, EnchantTable, EnderChest, FlowerPot, Furnace, Hopper, ItemFrame, Jukebox, MobSpawner, Sign, ShulkerBox, Skull};
 
@@ -38,7 +37,7 @@ class Registerer{
 		Entity::registerEntity(EnderPearl::class);
 		Entity::registerEntity(FallingSand::class);
 		Entity::registerEntity(FireBall::class);
-		Entity::registerEntity(FireworksRocket::class);
+		Entity::registerEntity(FireworkRocket::class);
 		Entity::registerEntity(FishingHook::class);
 		Entity::registerEntity(FloatingText::class);
 		Entity::registerEntity(GhastFireball::class);
@@ -86,7 +85,6 @@ class Registerer{
 		Entity::registerEntity(MagmaCube::class);
 		Entity::registerEntity(Mooshroom::class);
 		Entity::registerEntity(Mule::class);
-		Entity::registerEntity(NPC::class);
 		Entity::registerEntity(NPCHuman::class);
 		Entity::registerEntity(Ocelot::class);
 		Entity::registerEntity(Parrot::class);

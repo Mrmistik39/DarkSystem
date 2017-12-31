@@ -15,10 +15,10 @@ interface Info extends ProtocolConverter{
 	
 	const MINECRAFT_VERSION = "v1.x";
 	const MINECRAFT_VERSION_NETWORK = "1.2";
-	const CURRENT_PROTOCOL = 141;
-	const ACCEPTED_PROTOCOLS = [101, 102, 105, 106, 107, 110, 111, 112, 113, 120, 121, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 150, 160, 170, 414];
-	
-	const BASE_PROTOCOL = 141;
+	const OLDEST_PROTOCOL = 101;
+	const NEWEST_PROTOCOL = 160;
+	//Only special protocol numbers
+	const ACCEPTED_PROTOCOLS = [414]; #blamemojang
 	
 	const LOGIN_PACKET = 0x01;
 	const PLAY_STATUS_PACKET = 0x02;

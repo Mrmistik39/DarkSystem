@@ -46,19 +46,19 @@ class ServerInfoCommand extends VanillaCommand{
         }
        
         if(Translate::checkTurkish() === "yes"){
-            $ui = new CustomForm(TextFormat::AQUA . "DarkSystem");
-		    $button = new Button("DarkSystem");
-		    $button->setImage(Button::IMAGE_TYPE_URL, "");
-		    //$ui->addButton($button);
-		    $ui->addElement(new Label(TextFormat::GREEN . "DarkSystem, PocketMine-MP'nin Yeniden Yazılması Adına Yapılmış Bir Projedir."));
-		    $ui->addElement(new Label(TextFormat::GREEN . "DarkSystem'i Buradan İndirebilirsiniz: " . TextFormat::GOLD . "https://github.com/DarkYusuf13/DarkSystem"));
+            $ui = new CustomForm(TextFormat::AQUA . $this->server->getSoftwareName());
+		    $button = new Button($this->server->getSoftwareName());
+		    $button->setImage(Button::IMAGE_TYPE_URL, "https://raw.githubusercontent.com/DarkSystem-PE/DarkSystem/master/resources/logo.png");
+		    $ui->addButton($button);
+		    $ui->addElement(new Label(TextFormat::GREEN . $this->server->getSoftwareName() . ", PocketMine-MP'nin Yeniden Yazılması Adına Yapılmış Bir Projedir."));
+		    $ui->addElement(new Label(TextFormat::GREEN . "DarkSystem'i Buradan İndirebilirsiniz: " . TextFormat::GOLD . "https://github.com/DarkSystem-PE/DarkSystem"));
         }else{
-			$ui = new CustomForm(TextFormat::AQUA . "DarkSystem");
-		    $button = new Button("DarkSystem");
+			$ui = new CustomForm(TextFormat::AQUA . $this->server->getSoftwareName());
+		    $button = new Button($this->server->getSoftwareName());
 		    $button->setImage(Button::IMAGE_TYPE_URL, "");
-		    //$ui->addButton($button);
-		    $ui->addElement(new Label(TextFormat::GREEN . "DarkSystem is rewritation project of PocketMine-MP"));
-		    $ui->addElement(new Label(TextFormat::GREEN . "You can download from " . TextFormat::GOLD . "https://github.com/DarkYusuf13/DarkSystem"));
+		    $ui->addButton($button);
+		    $ui->addElement(new Label(TextFormat::GREEN . $this->server->getSoftwareName() . " is rewritation project of PocketMine-MP"));
+		    $ui->addElement(new Label(TextFormat::GREEN . "You can download from " . TextFormat::GOLD . "https://github.com/DarkSystem-PE/DarkSystem"));
         }
         
 		$sender->showModal($ui);

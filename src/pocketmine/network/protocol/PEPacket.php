@@ -64,7 +64,7 @@ abstract class PEPacket extends DataPacket{
 			case Info::PROTOCOL_141;
 			case Info::PROTOCOL_150;
 			case Info::PROTOCOL_160;
-			case Info::PROTOCOL_170;
+			case Info::PROTOCOL_170; //Hmm
 			case Info::PROTOCOL_414; //Really, someone sit on keyboard :P
 				return Info::PROTOCOL_120;
 			case Info::PROTOCOL_110:

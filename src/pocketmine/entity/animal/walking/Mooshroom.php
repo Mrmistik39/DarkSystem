@@ -7,8 +7,9 @@ use pocketmine\item\Item;
 use pocketmine\Player;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\entity\Creature;
+use pocketmine\entity\Shearable;
 
-class Mooshroom extends WalkingAnimal{
+class Mooshroom extends WalkingAnimal implements Shearable{
 	
 	const NETWORK_ID = self::MOOSHROOM;
 

@@ -13,7 +13,6 @@ namespace pocketmine\item;
 
 use pocketmine\block\Block;
 use pocketmine\entity\Entity;
-use pocketmine\level\format\FullChunk;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
@@ -34,7 +33,8 @@ class SpawnEgg extends Item{
 
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$entity = null;
-		if($target->getId() == Block::MONSTER_SPAWNER){
+		
+		if($target->getId() === Block::MONSTER_SPAWNER){
 			return true;
 		}
 		
@@ -62,11 +62,12 @@ class SpawnEgg extends Item{
 		$entity = Entity::createEntity($this->meta, $level, $nbt);
 
 		if($entity instanceof Entity){
-			if($player->isSurvival() or $player->isAdventure()){
+			if($player->isLiving()){
 				--$this->count;
 			}
 			
 			$entity->spawnToAll();
+			
 			return true;
 		}
 

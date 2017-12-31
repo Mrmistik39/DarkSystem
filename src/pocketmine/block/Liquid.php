@@ -332,6 +332,7 @@ abstract class Liquid extends Transparent{
 			}elseif($j === 3){
 				++$z;
 			}
+			
 			$block = $this->getLevel()->getBlock($this->temporalVector->setComponents($x, $y, $z));
 
 			if(!$block->canBeFlowedInto() and !($block instanceof Liquid)){
@@ -376,11 +377,7 @@ abstract class Liquid extends Transparent{
 			}
 		}
 	}
-
-	public function getBoundingBox(){
-		return null;
-	}
-
+	
 	public function getDrops(Item $item){
 		return [];
 	}

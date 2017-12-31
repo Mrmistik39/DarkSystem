@@ -26,6 +26,7 @@ use pocketmine\item\Item;
 use pocketmine\Server;
 
 class CraftingTransactionGroup extends SimpleTransactionGroup{
+	
 	/** @var Item[] */
 	protected $input = [];
 	/** @var Item[] */

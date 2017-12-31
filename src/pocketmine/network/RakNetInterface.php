@@ -57,9 +57,7 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
 		$this->count = $count;
 		$this->maxcount = $maxcount;
 		
-		$this->interface->sendOption("name",
-		$this->count . ";" . $maxcount . ";"
-		);
+		$this->interface->sendOption("name", $this->count . ";" . $maxcount . ";");
 	}
 	
 	public function __construct(Server $server){
@@ -153,7 +151,7 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
 		$player->setIdentifier($identifier);
 		$this->server->addPlayer($identifier, $player);
 	}
-
+	
 	public function handleEncapsulated($identifier, $buffer){
 		if(isset($this->players[$identifier])){
 			$player = $this->players[$identifier];

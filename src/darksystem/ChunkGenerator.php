@@ -24,8 +24,8 @@ class ChunkGenerator extends Thread{
 	protected $externalQueue;
 	protected $internalQueue;
 	
-	const SUPPORTED_PROTOCOLS = [ProtocolInfo::BASE_PROTOCOL, ProtocolInfo::PROTOCOL_105, ProtocolInfo::PROTOCOL_110, ProtocolInfo::PROTOCOL_120];
-
+	const SUPPORTED_PROTOCOLS = [ProtocolInfo::PROTOCOL_105, ProtocolInfo::PROTOCOL_110, ProtocolInfo::PROTOCOL_120];
+	
 	public function __construct(\ClassLoader $loader = null){
 		$this->externalQueue = new \Threaded;
 		$this->internalQueue = new \Threaded;

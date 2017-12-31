@@ -70,7 +70,7 @@ class NBT{
 
 		if($item->hasCompoundTag()){
 			$tag->tag = clone $item->getNamedTag();
-			//$tag->tag->setName("tag");
+			$tag->tag->setName("tag");
 		}
 
 		return $tag;

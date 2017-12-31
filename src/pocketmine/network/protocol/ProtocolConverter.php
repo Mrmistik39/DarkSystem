@@ -11,15 +11,18 @@
 
 namespace pocketmine\network\protocol;
 
-interface ProtocolConverter{
+interface ProtocolConverter extends ProtocolAPI{
 	
+	/** MCPE 1.0.x **/
 	const PROTOCOL_105 = 105;
 	const PROTOCOL_106 = 106;
 	const PROTOCOL_107 = 107;
+	/** MCPE 1.1.x **/
 	const PROTOCOL_110 = 110;
 	const PROTOCOL_111 = 111;
 	const PROTOCOL_112 = 112;
 	const PROTOCOL_113 = 113;
+	/** MCPE 1.2.x **/
 	const PROTOCOL_120 = 120;
 	const PROTOCOL_121 = 121;
 	const PROTOCOL_130 = 130;
@@ -34,9 +37,11 @@ interface ProtocolConverter{
 	const PROTOCOL_139 = 139;
 	const PROTOCOL_140 = 140;
 	const PROTOCOL_141 = 141;
+	/** Undefined Protocols **/
 	const PROTOCOL_150 = 150;
 	const PROTOCOL_160 = 160;
 	const PROTOCOL_170 = 170;
+	/** .__. **/
 	const PROTOCOL_414 = 414; //Who sit on keyboard? #blamemojang
 	
 }

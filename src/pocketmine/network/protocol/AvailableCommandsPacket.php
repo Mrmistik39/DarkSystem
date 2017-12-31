@@ -45,9 +45,9 @@ class AvailableCommandsPacket extends PEPacket{
 	
 	public function encode($playerProtocol){
 		$this->reset($playerProtocol);
-		$this->putString($this->commands);
-		/*//$this->put($this->getPreparedCommandData());
-		if(isset(self::$commandsBuffer[$playerProtocol])){
+		$this->put($this->commands);
+		//$this->put($this->getPreparedCommandData());
+		/*if(isset(self::$commandsBuffer[$playerProtocol])){
 			$this->put(self::$commandsBuffer[$playerProtocol]);
 		}else{
 			//$this->putString(self::$commandsBuffer['default']);

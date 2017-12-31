@@ -30,9 +30,11 @@ class EntityRegainHealthEvent extends EntityEvent implements Cancellable{
 
 	const CAUSE_REGEN = 0;
 	const CAUSE_EATING = 1;
+	const CAUSE_FEED = 1;
 	const CAUSE_MAGIC = 2;
 	const CAUSE_CUSTOM = 3;
-
+	const CAUSE_SATURATION = 4;
+	
 	private $amount;
 	private $reason;
 
@@ -61,7 +63,15 @@ class EntityRegainHealthEvent extends EntityEvent implements Cancellable{
 	public function setAmount($amount){
 		$this->amount = $amount;
 	}
-
+	
+	public function getCause(){
+		return $this->reason;
+	}
+	
+	public function getReason(){
+		return $this->reason;
+	}
+	
 	public function getRegainReason(){
 		return $this->reason;
 	}

@@ -78,13 +78,13 @@ abstract class Command{
 		$this->setDescription($description);
 		$this->usageMessage = $usageMessage === null ? "/" . $name : $usageMessage;
 		$this->setAliases($aliases);
-		$this->timings = new TimingsHandler("** Komut: " . $name);
+		$this->timings = new TimingsHandler("** Command: " . $name);
 		
-		/*if(count($overloads) == 0){
+		if(count($overloads) == 0){
 			self::applyDefaultSettings($this);
 		}else{
 			$this->overloads = $overloads;
-		}*/
+		}
 	}
 	
 	/**

@@ -34,7 +34,6 @@ use pocketmine\command\defaults\FillCommand;
 use pocketmine\command\defaults\GamemodeCommand;
 use pocketmine\command\defaults\GarbageCollectorCommand;
 use pocketmine\command\defaults\GiveCommand;
-use pocketmine\command\defaults\GivePizzaCommand;
 use pocketmine\command\defaults\HelpCommand;
 use pocketmine\command\defaults\KickCommand;
 use pocketmine\command\defaults\KillCommand;
@@ -74,10 +73,6 @@ use pocketmine\command\defaults\WhitelistCommand;
 use pocketmine\command\defaults\WorldCommand;
 use pocketmine\command\defaults\XpCommand;
 use pocketmine\command\defaults\XYZCommand;
-use pocketmine\command\defaults\ZoomCommand;
-use darksystem\darkbot\command\ChatDarkBotCommand;
-use darksystem\darkbot\command\SpawnDarkBotCommand;
-use pocketmine\entity\morph\MorphCommand;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 use pocketmine\Server;
@@ -90,7 +85,7 @@ use pocketmine\command\defaults\ExtractPluginCommand;
 
 class SimpleCommandMap implements CommandMap{
 	
-	const ROOT = "pocketmine"; //Why it is not 'darksystem'?
+	const ROOT = "pocketmine";
 	
 	protected $knownCommands = [];
 	
@@ -129,13 +124,10 @@ class SimpleCommandMap implements CommandMap{
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new SaveOffCommand("save-off"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new SaveCommand("save-all"), null, true);
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new GiveCommand("give"));
-		//SimpleCommandMap::register(SimpleCommandMap::ROOT, new GivePizzaCommand("givepizza"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new AddUICommand("addui"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new ServerInfoCommand("serverinfo"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new CreateInvCommand("createinv"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new WorldCommand("world"));
-		SimpleCommandMap::register(SimpleCommandMap::ROOT, new MorphCommand("morph"));
-		SimpleCommandMap::register(SimpleCommandMap::ROOT, new ZoomCommand("zoom"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new XYZCommand("xyz"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new EffectCommand("effect"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new ClearCommand("clear"));
@@ -144,7 +136,6 @@ class SimpleCommandMap implements CommandMap{
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new ParticleCommand("particle"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new GamemodeCommand("gamemode"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new KillCommand("kill"));
-		SimpleCommandMap::register(SimpleCommandMap::ROOT, new SpawnDarkBotCommand("spawndarkbot"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new SpawnPointCommand("spawnpoint"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new SetWorldSpawnCommand("setworldspawn"));
 		SimpleCommandMap::register(SimpleCommandMap::ROOT, new SummonCommand("summon"));

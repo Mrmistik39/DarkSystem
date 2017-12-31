@@ -27,10 +27,8 @@ class LoginPacket extends PEPacket{
 	public $serverAddress;
 	public $clientSecret;
 	public $slim = false;
-	//public $skinId = null;
 	public $skinName;
 	public $skinGeometryName = "";
-	//public $skinGeometryId = "";
 	public $skinGeometryData = "";
 	public $capeData = "";
 	public $validSkinData = true;
@@ -60,10 +58,10 @@ class LoginPacket extends PEPacket{
 			$this->getShort();
 		}
 		$this->protocol1 = $this->getInt();
-		if($this->protocol1 > Info::CURRENT_PROTOCOL && $this->protocol1 < (Info::CURRENT_PROTOCOL + 20)){
+		if($this->protocol1 > Info::NEWEST_PROTOCOL){
 			$this->protocol1 = Info::CURRENT_PROTOCOL;
 		}
-		if(!in_array($this->protocol1, $acceptedProtocols) && $this->protocol1 !== Info::CURRENT_PROTOCOL){
+		if(!in_array($this->protocol1, $acceptedProtocols) && $this->protocol1 < Info::OLDEST_PROTOCOL && $this->protocol1 > NEWEST_PROTOCOL){
 			$this->isValidProtocol = false;
 			return;
 		}
@@ -114,9 +112,7 @@ class LoginPacket extends PEPacket{
         }
         
 		$this->serverAddress = $this->playerData['ServerAddress'];
-		//$this->skinName = 'Standard_Custom'; //$this->playerData['SkinId'];
 		$this->skinName = $this->playerData['SkinId'];
-		//$this->skinId = $this->playerData['SkinName'];
 		$this->skin = base64_decode($this->playerData['SkinData']);
 		/**if(strlen($this->skin) !== 8192 || strlen($this->skin) == !16384){
 		    $this->validSkinData = false;
@@ -124,9 +120,6 @@ class LoginPacket extends PEPacket{
 		if(isset($this->playerData['SkinGeometryName'])){
             $this->skinGeometryName = $this->playerData['SkinGeometryName'];
         }
-        /*if(isset($this->playerData['SkinGeometryId'])){
-            $this->skinGeometryId = $this->playerData['SkinGeometryId'];
-        }*/
 		if(isset($this->playerData['SkinGeometry'])){
             $this->skinGeometryData = base64_decode($this->playerData['SkinGeometry']);
         }

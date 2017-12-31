@@ -4,7 +4,7 @@ namespace pocketmine\block;
 
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
-use pocketmine\nbt\tag\Compound;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
@@ -54,7 +54,7 @@ class MobHead extends Transparent{
 			}else{
 				$rot = new ByteTag("Rot", 0);
 			}
-			$nbt = new Compound("", [
+			$nbt = new CompoundTag("", [
 				new StringTag("id", Tile::SKULL),
 				new IntTag("x", $block->x),
 				new IntTag("y", $block->y),
@@ -102,7 +102,8 @@ class MobHead extends Transparent{
 	public function getDrops(Item $item){
 		if($this->getLevel()!=null && (($tile = $this->getLevel()->getTile($this)) instanceof Skull)){
 			return [[Item::MOB_HEAD, $tile->getSkullType(), 1]];
-		}else
+		}else{
 			return [[Item::MOB_HEAD, 0, 1]];
+		}
 	}
 }

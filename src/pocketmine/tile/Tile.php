@@ -13,7 +13,6 @@ namespace pocketmine\tile;
 
 use pocketmine\event\Timings;
 use pocketmine\level\format\Chunk;
-use pocketmine\level\format\FullChunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\nbt\tag\CompoundTag;
@@ -158,7 +157,7 @@ abstract class Tile extends Position{
 		if(!$this->closed){
 			$this->closed = true;
 			unset($this->level->updateTiles[$this->id]);
-			if($this->chunk instanceof FullChunk){
+			if($this->chunk instanceof Chunk){
 				$this->chunk->removeTile($this);
 			}
 			

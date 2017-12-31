@@ -16,13 +16,8 @@ use darksystem\CrashReport;
 use darksystem\DarkSystem;
 use pocketmine\block\Block;
 use darksystem\PacketManager;
-use darksystem\StringTranslator;
 use darksystem\ThemeManager;
-use darksystem\darkbot\DarkBot;
-use darksystem\multicore\CoreStarter;
-use darksystem\crossplatform\CrossPlatform;
 use pocketmine\inventory\customUI\CustomUI;
-use darksystem\darkbot\command\SpawnDarkBotCommand;
 use pocketmine\command\CommandReader;
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
@@ -106,7 +101,7 @@ use pocketmine\level\generator\ender\Ender;
 use pocketmine\level\generator\normal\Normal;
 use pocketmine\level\generator\normal\Normal2;
 use pocketmine\level\generator\Generator;
-use pocketmine\level\generator\Void;
+use pocketmine\level\generator\VoidGenerator;
 use pocketmine\level\generator\Flat;
 use pocketmine\entity\animal\walking\{Chicken, Cow, Mooshroom, Ocelot, Pig, Rabbit, Sheep};
 use pocketmine\entity\monster\flying\{Blaze, Ghast};
@@ -274,7 +269,6 @@ class Server extends DarkSystem{
 	public $checkMovement = true;
 	public $antiFly = true;
 	public $allowInstabreak = false;
-	public $dbotBroadcast = false;
 	public $isCmdBlockEnable = true;
 	public $advancedFlyCheck = false;
 	public $forceResources = false;
@@ -420,18 +414,14 @@ class Server extends DarkSystem{
 	}
 	
 	public function getServerName(){
-		if(Translate::checkTurkish() === "yes"){
-			return $this->getConfigString("motd", $this->getCodename() . " Sunucusu");
-		}else{
-			return $this->getConfigString("motd", $this->getCodename() . " Server");
-		}
+		return $this->getConfigString("motd", $this->getCodename() . " Server");
 	}
 	
 	public function getAutoSave(){
 		return $this->autoSave;
 	}
 	
-	public function setAutoSave($value){
+	public function setAutoSave($value = true){
 		$this->autoSave = (bool) $value;
 		foreach($this->levels as $l){
 			$l->setAutoSave($this->autoSave);
@@ -442,7 +432,7 @@ class Server extends DarkSystem{
 		return $this->autoGenerate;
 	}
 	
-	public function setAutoGenerate($value){
+	public function setAutoGenerate($value = true){
 		$this->autoGenerate = (bool) $value;
 	}
 	
@@ -450,7 +440,7 @@ class Server extends DarkSystem{
 		return $this->savePlayerData;
 	}
 	
-	public function setSavePlayerData($value){
+	public function setSavePlayerData($value = true){
 		$this->savePlayerData = (bool) $value;
 	}
 	
@@ -566,14 +556,6 @@ class Server extends DarkSystem{
 		}else{
 			return $this->getConfigString("motd", "DarkSystem Server");
 		}
-	}
-	
-	public function getDarkBot(){
-		return $this->dbot;
-	}
-	
-	public function getDarkBotPrefix(){
-		return DarkBot::PREFIX;
 	}
 	
 	public function getLoader(){
@@ -709,22 +691,12 @@ class Server extends DarkSystem{
 		return $this->version->getRelease();
 	}
 	
-	public function isCreditsEnable(){
-		$isEnable = false; //TODO: Add config
-		switch($isEnable){
-			case true:
-			$result = 1;
-			break;
-			case false:
-			$result = 0;
-			break;
+	public function doesSupportProtocol($protocol){
+		if(!is_numberic($protocol)){
+			return false;
 		}
 		
-		return $result;
-	}
-	
-	public function isSupportProtocol($protocol){
-		if(in_array($protocol, ProtocolInfo::ACCEPTED_PROTOCOLS) || $protocol == ProtocolInfo::CURRENT_PROTOCOL){
+		if(in_array($protocol, ProtocolInfo::ACCEPTED_PROTOCOLS) || $protocol === ProtocolInfo::OLDEST_PROTOCOL || $protocol === ProtocolInfo::NEWEST_PROTOCOL || ($protocol > OLDEST_PROTOCOL && $protocol < NEWEST_PROTOCOL)){
 			return true;
 		}
 		
@@ -780,6 +752,11 @@ class Server extends DarkSystem{
 				new DoubleTag(2, $spawn->z)
 			]),
 			new StringTag("Level", $this->getDefaultLevel()->getName()),
+			//new StringTag("SpawnLevel", $this->getDefaultLevel()->getName()),
+			//new IntTag("SpawnX", (int) $spawn->x),
+			//new IntTag("SpawnY", (int) $spawn->y),
+			//new IntTag("SpawnZ", (int) $spawn->z),
+			//new ByteTag("SpawnForced", 1), //TODO
 			new ListTag("Inventory", []),
 			new ListTag("EnderChestInventory", []),
 			new ListTag("recipeBook", []),
@@ -788,7 +765,7 @@ class Server extends DarkSystem{
 			new IntTag("Score", 0),
 			new IntTag("ShoulderEntityLeft", 0),
 			new IntTag("ShoulderEntityRight", 0),
-			new IntTag("seenCredits", $this->isCreditsEnable()),
+			new IntTag("seenCredits", 0),
 			new IntTag("playerGameType", $this->getGamemode()),
 			new ListTag("Motion", [
 				new DoubleTag(0, 0.0),
@@ -1361,9 +1338,7 @@ class Server extends DarkSystem{
 		$this->filePath = $filePath;
 		$this->translate = new Translate($this);
 		$this->translate->prepareLang();
-		$this->dbot = new DarkBot($this);
 		$this->themeManager = new ThemeManager($this);
-		$this->core = new CoreStarter($this);
 		try{
 			if(Translate::checkTurkish() === "yes"){
 			if(!file_exists($dataPath . "dunyalar/")){
@@ -1462,45 +1437,7 @@ class Server extends DarkSystem{
 			$this->softConfig = new Config($this->getDataPath() . "pocketmine-advanced.yml", Config::YAML, []);
 			$this->cmdReader = new CommandReader($knsol);
 			
-			if(Translate::checkTurkish() === "yes"){
 			$this->properties = new Config($this->getDataPath() . "sunucu.properties", Config::PROPERTIES, [
-				"motd" => $this->getSoftwareName() . " Sunucusu",
-				"server-ip" => "0.0.0.0",
-				"server-port" => 19132,
-				"memory-limit" => "256M",
-				"white-list" => false,
-				"spawn-protection" => 16,
-				"max-players" => 25,
-				"allow-flight" => false,
-				"spawn-animals" => true,
-				"animals-limit" => 0,
-				"spawn-mobs" => true,
-				"mobs-limit" => 0,
-				"gamemode" => 0,
-				"force-gamemode" => true,
-				"hardcore" => false,
-				"pvp" => true,
-				"difficulty" => 1,
-				"enable-command-block" => true,
-				"generator-settings" => "",
-				"level-name" => "world",
-				"level-seed" => "",
-				"level-type" => "DEFAULT",
-				"enable-query" => true,
-				"auto-query" => false,
-				"enable-rcon" => false,
-				"rcon.password" => substr(base64_encode(random_bytes(20)), 3, 10),
-				"auto-save" => true,
-				"auto-generate" => true,
-				"save-player-data" => true,
-				"time-update" => true,
-				"online-mode" => false,
-				"theme" => "classic",
-				"random-theme" => false,
-				"colorful-theme" => false
-			]);
-			}else{
-			$this->properties = new Config($this->getDataPath() . "server.properties", Config::PROPERTIES, [
 				"motd" => $this->getSoftwareName() . " Server",
 				"server-ip" => "0.0.0.0",
 				"server-port" => 19132,
@@ -1536,16 +1473,10 @@ class Server extends DarkSystem{
 				"random-theme" => false,
 				"colorful-theme" => false
 			]);
-			}
-			
-			if($this->getMotd() == "schudoz" || $this->getMotd() == "devlrs"){ //Easter egg
-				$random = substr(base64_encode(random_bytes(20)), 3, 10);
-				$this->konsol->directSend("\n" . "§" . mt_rand(1, 9) . "" . $random);
-			}
 			
 			$this->konsol->directSend($this->getLogo());
 			
-			//if(count($this->pluginMgr->getPlugins()) > 0){
+			//if($this->pluginMgr->getPluginCount() > 0){
 				if(Translate::checkTurkish() === "yes"){
 					$this->konsol->info("§aEklentiler Yükleniyor...");
 				}else{
@@ -1751,21 +1682,18 @@ class Server extends DarkSystem{
 
 			$this->queryRegenerator = new QueryRegenerateEvent($this, 5);
 			
-			$this->crossplatform = new CrossPlatform($this);
-			
 			$this->pluginMgr->loadPlugins($this->pluginPath);
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
 			$this->network->registerInterface(new RakNetInterface($this));
 			
 			LevelProviderManager::addProvider($this, Anvil::class);
-			//LevelProviderManager::addProvider($this, PMAnvil::class);
 			LevelProviderManager::addProvider($this, McRegion::class);
 			
 			Generator::addGenerator(Flat::class, "flat");
 			Generator::addGenerator(Normal::class, "normal");
 			Generator::addGenerator(Normal::class, "default");
 			Generator::addGenerator(Normal2::class, "normal2");
-			Generator::addGenerator(Void::class, "void");
+			Generator::addGenerator(VoidGenerator::class, "void");
 			Generator::addGenerator(Nether::class, "hell");
 			Generator::addGenerator(Nether::class, "nether");
 			Generator::addGenerator(Ender::class, "ender");
@@ -1939,7 +1867,6 @@ class Server extends DarkSystem{
 				"Hızlı!",
 				"Kod Düzenleyicisi Tarafından Yapıldı!",
 				"MCPE İçin!",
-				"DarkBot Tarafından Destekleniyor!",
 				"Temiz!",
 				"Güvenli!",
 				"Lagsız!",
@@ -1950,10 +1877,9 @@ class Server extends DarkSystem{
 				"Fast!",
 				"Made by Code Editor!",
 				"For MCPE!",
-				"Sponsored by DarkBot!",
 				"Clean!",
 				"Safe!",
-				"No-lag!",
+				"Less-lag!",
 				"Made in Turkey!"
 			];
 		}
@@ -1968,13 +1894,6 @@ class Server extends DarkSystem{
 	}
 	
 	public function broadcastMessage($message, $recipients = null){
-		/*if(strpos($message, $this->getDarkBotPrefix())){
-			foreach($this->getOnlinePlayers() as $p){
-				$p->sendMessage($message);
-				return true;
-			}
-		}*/
-		
 		if(!is_array($recipients)){
 			return $this->broadcast($message, Server::BROADCAST_CHANNEL_USERS);
 		}
@@ -2260,9 +2179,8 @@ class Server extends DarkSystem{
 			}
 			
 			$this->shutdown();
-			$this->dbot->shutdown();
 			
-			//if(count($this->pluginMgr->getPlugins()) > 0){
+			//if($this->pluginMgr->getPluginCount() > 0){
 				if(Translate::checkTurkish() === "yes"){
 					$this->konsol->info("§cEklentiler Devre Dışı Bırakılıyor...");
 				}else{
@@ -2549,7 +2467,6 @@ class Server extends DarkSystem{
 	
 	private function tick(){
 		$tickTime = microtime(true);
-		$dbotcheck = $this->dbot->check();
 		//if(($tickTime - $this->nextTick) < -0.025){
 		if($tickTime < $this->nextTick){
 			return false;
@@ -2599,49 +2516,6 @@ class Server extends DarkSystem{
 					if($this->konsol instanceof MainLogger){
 						$this->konsol->logException($e);
 					}
-				}
-			}
-		}
-		if(($this->tickCounter % 2975) === 0 && $dbotcheck = "§aAktif" && $this->dbotBroadcast){
-			if(Translate::checkTurkish() === "yes"){
-				switch(mt_rand(1, 5)){
-					case 1:
-					$this->broadcastMessage($this->getDarkBotPrefix() . "§aSunucu Benimle Güvende!");
-					break;
-					case 2:
-					$this->broadcastMessage($this->getDarkBotPrefix() . "§aBu Sunucu Güvencem Altındadır!");
-					break;
-					case 3:
-					$this->broadcastMessage($this->getDarkBotPrefix() . "§aYakında Oyuna Bende Katılacağım!");
-					break;
-					case 4:
-					$this->broadcastMessage($this->getDarkBotPrefix() . "§aBen Sadece Bir Robot Değilim!");
-					break;
-					case 5:
-					$this->broadcastMessage($this->getDarkBotPrefix() . "§aGüvenlik Önemlidir!");
-					break;
-					default;
-					break;
-				}
-			}else{
-				switch(mt_rand(1, 5)){
-					case 1:
-					$this->broadcastMessage($this->getDarkBotPrefix() . "§aServer is safe with me!");
-					break;
-					case 2:
-					$this->broadcastMessage($this->getDarkBotPrefix() . "§aThis server is in protection of me!");
-					break;
-					case 3:
-					$this->broadcastMessage($this->getDarkBotPrefix() . "§aI will join game soon!");
-					break;
-					case 4:
-					$this->broadcastMessage($this->getDarkBotPrefix() . "§aI am not just a robot!");
-					break;
-					case 5:
-					$this->broadcastMessage($this->getDarkBotPrefix() . "§aProtection is important!");
-					break;
-					default;
-					break;
 				}
 			}
 		}

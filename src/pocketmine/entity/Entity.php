@@ -184,7 +184,7 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	const DATA_FLAG_CHARGE_ATTACK = 41;
 	const DATA_FLAG_WASD_CONTROLLED = 42, DATA_FLAG_IS_WASD_CONTROLLED = 42;
 	const DATA_FLAG_CAN_POWER_JUMP = 43;
-	const DATA_FLAG_LINGER = 44; //45
+	const DATA_FLAG_LINGER = 44;
 	const DATA_FLAG_HAS_COLLISION = 45;
 	const DATA_FLAG_AFFECTED_BY_GRAVITY = 46;
 	const DATA_FLAG_FIRE_IMMUNE = 47;
@@ -364,7 +364,6 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 		$this->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_NOT_IN_WATER, true);
 		$this->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_SHOW_NAMETAG, true);
 		$this->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_ALWAYS_SHOW_NAMETAG, true);
-		$this->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_AFFECTED_BY_GRAVITY, true);
 		
 		if(!isset($this->namedtag->OnGround)){
 			$this->namedtag->OnGround = new ByteTag("OnGround", 0);
@@ -499,7 +498,7 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	}
 	
 	public function setCanClimb($value = true){
-		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_CAN_CLIMB, $value);
+		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_CAN_CLIMB, (bool) $value);
 	}
 	
 	public function canClimbWalls(){
@@ -507,7 +506,7 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	}
 	
 	public function setCanClimbWalls($value = true){
-		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_WALLCLIMBING, $value);
+		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_WALLCLIMBING, (bool) $value);
 	}
 	
 	public function getOwningEntityId(){
@@ -1231,7 +1230,11 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	public function getEyeHeight(){
 		return $this->eyeHeight;
 	}
-
+	
+	public function getVisibleEyeHeight(){
+		return $this->eyeHeight;
+	}
+	
 	public function moveFlying(){
 
 	}
@@ -1442,43 +1445,6 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 		return true;
 	}
 	
-	/*public function fastMove($dx, $dy, $dz){
-		$this->blocksAround = null;
-
-		if($dx == 0 && $dz == 0 && $dy == 0){
-			return true;
-		}
-		
-		$newBB = $this->boundingBox->getOffsetBoundingBox($dx, $dy, $dz);
-
-		$list = $this->level->getCollisionCubes($this, $newBB, false);
-
-		if(count($list) === 0){
-			$this->boundingBox = $newBB;
-		}
-
-		$this->x = ($this->boundingBox->minX + $this->boundingBox->maxX) / 2;
-		$this->y = $this->boundingBox->minY - $this->ySize;
-		$this->z = ($this->boundingBox->minZ + $this->boundingBox->maxZ) / 2;
-
-		$this->checkChunks();
-
-		if(!$this->onGround || $dy != 0){
-			$bb = clone $this->boundingBox;
-			$bb->minY -= 0.75;
-			$this->onGround = false;
-
-			if(count($this->level->getCollisionBlocks($bb)) > 0){
-				$this->onGround = true;
-			}
-		}
-		
-		$this->isCollided = $this->onGround;
-		$this->updateFallState($dy, $this->onGround);
-		
-		return true;
-	}*/
-	
 	public function move($dx, $dy, $dz){	
 		if($dx == 0 && $dz == 0 && $dy == 0){
 			return true;
@@ -1509,121 +1475,6 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 			return true;
 		}
 	}
-	
-	/*public function move($dx, $dy, $dz){
-		$this->blocksAround = null;
-
-		if($dx == 0 && $dz == 0 && $dy == 0){
-			return true;
-		}
-
-		if($this->keepMovement){
-			$this->boundingBox->offset($dx, $dy, $dz);
-			$this->setPosition($this->temporalVector->setComponents(($this->boundingBox->minX + $this->boundingBox->maxX) / 2, $this->boundingBox->minY, ($this->boundingBox->minZ + $this->boundingBox->maxZ) / 2));
-			$this->onGround = $this->isPlayer ? true : false;
-			
-			return true;
-		}else{
-			$this->ySize *= 0.4;
-			
-			$movX = $dx;
-			$movY = $dy;
-			$movZ = $dz;
-
-			$axisalignedbb = clone $this->boundingBox;
-			
-			assert(abs($dx) <= 20 && abs($dy) <= 20 && abs($dz) <= 20, "Movement distance is excessive: dx=$dx, dy=$dy, dz=$dz");
-			
-			$tickRate = 1;
-			
-			$list = $this->level->getCollisionCubes($this, $tickRate > 1 ? $this->boundingBox->getOffsetBoundingBox($dx, $dy, $dz) : $this->boundingBox->addCoord($dx, $dy, $dz), false);
-
-			foreach($list as $bb){
-				$dy = $bb->calculateYOffset($this->boundingBox, $dy);
-			}
-
-			$this->boundingBox->offset(0, $dy, 0);
-
-			$fallingFlag = ($this->onGround || ($dy != $movY && $movY < 0));
-
-			foreach($list as $bb){
-				$dx = $bb->calculateXOffset($this->boundingBox, $dx);
-			}
-
-			$this->boundingBox->offset($dx, 0, 0);
-
-			foreach($list as $bb){
-				$dz = $bb->calculateZOffset($this->boundingBox, $dz);
-			}
-
-			$this->boundingBox->offset(0, 0, $dz);
-			
-			if($this->stepHeight > 0 && $fallingFlag && $this->ySize < 0.05 && ($movX != $dx || $movZ != $dz)){
-				$cx = $dx;
-				$cy = $dy;
-				$cz = $dz;
-				$dx = $movX;
-				$dy = $this->stepHeight;
-				$dz = $movZ;
-
-				$axisalignedbb1 = clone $this->boundingBox;
-
-				$this->boundingBox->setBB($axisalignedbb);
-
-				$list = $this->level->getCollisionCubes($this, $this->boundingBox->addCoord($dx, $dy, $dz), false);
-
-				foreach($list as $bb){
-					$dy = $bb->calculateYOffset($this->boundingBox, $dy);
-				}
-
-				$this->boundingBox->offset(0, $dy, 0);
-
-				foreach($list as $bb){
-					$dx = $bb->calculateXOffset($this->boundingBox, $dx);
-				}
-
-				$this->boundingBox->offset($dx, 0, 0);
-
-				foreach($list as $bb){
-					$dz = $bb->calculateZOffset($this->boundingBox, $dz);
-				}
-
-				$this->boundingBox->offset(0, 0, $dz);
-
-				if(($cx ** 2 + $cz ** 2) >= ($dx ** 2 + $dz ** 2)){
-					$dx = $cx;
-					$dy = $cy;
-					$dz = $cz;
-					$this->boundingBox->setBB($axisalignedbb1);
-				}else{
-					$this->ySize += 0.5;
-				}
-			}
-
-			$this->x = ($this->boundingBox->minX + $this->boundingBox->maxX) / 2;
-			$this->y = $this->boundingBox->minY - $this->ySize;
-			$this->z = ($this->boundingBox->minZ + $this->boundingBox->maxZ) / 2;
-
-			$this->checkChunks();
-			$this->checkBlockCollision();
-			//$this->checkGroundState($movX, $movY, $movZ, $dx, $dy, $dz);
-			$this->updateFallState($dy, $this->onGround);
-
-			if($movX != $dx){
-				$this->motionX = 0;
-			}
-
-			if($movY != $dy){
-				$this->motionY = 0;
-			}
-
-			if($movZ != $dz){
-				$this->motionZ = 0;
-			}
-			
-			return true;
-		}
-	}*/
 	
 	public function setPositionAndRotation(Vector3 $pos, $yaw, $pitch){
 		if($this->setPosition($pos) === true){
@@ -1961,7 +1812,7 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 			}
 		
 			$targets = $this->hasSpawned;
-			if($this instanceof Player){
+			if($this->isPlayer){
 				if(!$this->spawned){
 					return;
 				}
@@ -2048,7 +1899,7 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	}
 	
 	public function setAirTick($val){
-		$this->setDataProperty(Entity::DATA_AIR, Entity::DATA_TYPE_SHORT, $val, false);
+		$this->setDataProperty(Entity::DATA_AIR, Entity::DATA_TYPE_SHORT, $val);
 	}
 	
 }

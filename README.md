@@ -1,7 +1,7 @@
 <img src="https://raw.githubusercontent.com/DarkSystem-PE/DarkSystem/master/resources/logo.png" alt="DarkSystem Logo" title="Aimeos" align="center" height="90"> <img src="https://raw.githubusercontent.com/DarkSystem-PE/DarkSystem/master/resources/banner.png" alt="DarkSystem Banner" title="Aimeos" align="center" height="105"> <img src="https://raw.githubusercontent.com/DarkSystem-PE/DarkSystem/master/resources/turkish_flag.png" alt="Turkish Flag" title="Aimeos" align="center" height="90">
 
 
-**DarkSystem is cross-platform server software for Minecraft with many features**
+**DarkSystem is a server software for Minecraft: PE/BE with many features**
 
 [![License](https://img.shields.io/github/license/DarkSystem-PE/DarkSystem.svg)](https://github.com/DarkSystem-PE/DarkSystem/blob/master/LICENSE)
 [![GitHub contributors](https://img.shields.io/github/contributors/DarkSystem-PE/DarkSystem.svg)](https://github.com/DarkSystem-PE/DarkSystem/graphs/contributors)
@@ -25,8 +25,6 @@ PORT: **19130**<br>
 - [x] DarkSystem is **# 1** about speed & no-lag.
   * We think so
 - [x] Based on **old** PocketMine-MP for best performance and stability.
-- [x] MC:PC Support!
-  * PC players can join to PE Server!
 - [x] Loads chunks region-to-region.
   * It uses less CPU resources & loads chunks fast.
 - [x] Cached chunk loading
@@ -73,8 +71,6 @@ PORT: **19130**<br>
     * Opens virtual inventories.
   * /world
     * You can teleport to another world without a plugin, only with a simple command!
-  * /zoom
-    * May be useful for PvP servers.
   * /addui
     * Allows to create fully customizable menus
     * *Usage:* /addui {player} {type: shop/alert/image/slider/dropdown/input/mix}
@@ -85,8 +81,7 @@ PORT: **19130**<br>
   * More commands:
     * /clear
     * /tpall
-    * /clearchat 
-    * /morph 
+    * /clearchat
     * /cave
     * /summon
     * /chunkinfo
@@ -95,7 +90,7 @@ PORT: **19130**<br>
    * Parrot,
    * NPC,
    * Chalkboard,
-   * LearnToCodeMascot.
+   * Learn To Code Mascot.
 - [x] Extended Plugin API (It is an api called as DarkAPI :D lol)
   * Support Compound & CompoundTag etc.
 - [x] Compatible with newest plugins

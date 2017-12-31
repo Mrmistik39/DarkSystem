@@ -66,9 +66,9 @@ namespace pocketmine{
 	use darksystem\setup\Setup;
 	
 	const NAME = "DarkSystem";
-	const VERSION = "6.0";
+	const VERSION = "7.0";
 	const API_VERSION = "3.0.1";
-	const CODENAME = "Redflame";
+	const CODENAME = "Snowman";
 	
 	function unlink(){
 		return true;

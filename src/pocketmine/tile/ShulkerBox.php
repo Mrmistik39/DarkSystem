@@ -16,7 +16,9 @@ use pocketmine\nbt\tag\StringTag;
 use pocketmine\nbt\tag\IntTag;
 
 class ShulkerBox extends Spawnable implements InventoryHolder, Container, Nameable{
-
+	
+	const SIZE = 27;
+	
     protected $inventory;
 
     public function __construct(Level $level, CompoundTag $nbt){
@@ -63,7 +65,7 @@ class ShulkerBox extends Spawnable implements InventoryHolder, Container, Nameab
     public function setItem($index, Item $item){
         $i = $this->getSlotIndex($index);
 
-        if($item->getId() === Item::AIR || $item->getCount() <= 0){
+        if($item->isAir() || $item->getCount() <= 0){
             if($i >= 0){
                 unset($this->namedtag->Items[$i]);
             }
@@ -83,7 +85,7 @@ class ShulkerBox extends Spawnable implements InventoryHolder, Container, Nameab
      * @return int
      */
     public function getSize(){
-        return 27;
+        return ShulkerBox::SIZE;
     }
 
     /**

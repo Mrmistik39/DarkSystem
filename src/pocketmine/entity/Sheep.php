@@ -68,10 +68,10 @@ class Sheep extends Animal implements Colorable
 
     public function getColor()
     {
-        return (int)$this->namedtag["Color"];
+        return (int) $this->namedtag["Color"];
     }
 
-    public function setColor(int $color)
+    public function setColor($color)
     {
         $this->namedtag->Color = new ByteTag("Color", $color);
     }

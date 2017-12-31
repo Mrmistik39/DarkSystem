@@ -23,19 +23,17 @@ namespace pocketmine\item;
 
 use pocketmine\entity\Effect;
 
-
 interface FoodSource
 {
     public function getResidue();
 
-    public function getFoodRestore(): int;
+    public function getFoodRestore();
 
-    public function getSaturationRestore(): float;
+    public function getSaturationRestore();
 
     /**
      * @return Effect[]
      */
-    public function getAdditionalEffects(): array;
-
-
+    public function getAdditionalEffects();
+    
 }

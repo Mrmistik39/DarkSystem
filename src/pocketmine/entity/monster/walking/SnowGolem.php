@@ -16,17 +16,20 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\Player;
 use pocketmine\entity\Creature;
+use pocketmine\entity\Shearable;
 
-class SnowGolem extends WalkingMonster implements ProjectileSource{
+class SnowGolem extends WalkingMonster implements ProjectileSource, Shearable{
 	
 	const NETWORK_ID = self::SNOW_GOLEM;
-
+	
+	const NBT_KEY_PUMPKIN = "Pumpkin";
+	
 	public $width = 0.6;
 	public $height = 1.8;
-
+	
 	public function initEntity(){
 		parent::initEntity();
-
+		
 		$this->setFriendly(true);
 	}
 
@@ -74,7 +77,11 @@ class SnowGolem extends WalkingMonster implements ProjectileSource{
 			}
 		}
 	}
-
+	
+	public function getMaxHealth(){
+		return 4;
+	}
+	
 	public function getDrops(){
 		if($this->lastDamageCause instanceof EntityDamageByEntityEvent){
 			return [Item::get(Item::SNOWBALL, 0, 15)];

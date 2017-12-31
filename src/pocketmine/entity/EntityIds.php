@@ -100,6 +100,7 @@ interface EntityIds{
 	const EYE_OF_ENDER_SIGNAL = 70;
 	const ENDER_CRYSTAL = 71;
 	const FIREWORKS_ROCKET = 72;
+	const FIREWORK_ROCKET = 72;
 	const FIREWORKS = 72;
 	const FIREWORK = 72;
 

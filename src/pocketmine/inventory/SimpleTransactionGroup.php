@@ -63,7 +63,11 @@ class SimpleTransactionGroup implements TransactionGroup{
 	public function getInventories() {
 		return $this->inventories;
 	}
-
+	
+	public function getActions() {
+		return $this->transactions;
+	}
+	
 	public function getTransactions() {
 		return $this->transactions;
 	}
@@ -202,5 +206,4 @@ class SimpleTransactionGroup implements TransactionGroup{
 		}
 		return null;
 	}
-
 }

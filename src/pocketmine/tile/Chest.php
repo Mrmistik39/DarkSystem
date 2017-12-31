@@ -17,7 +17,6 @@ use pocketmine\inventory\DoubleChestInventory;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\item\Item;
 use pocketmine\level\Level;
-use pocketmine\level\format\FullChunk;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -26,7 +25,9 @@ use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
 
 class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
-
+	
+	const SIZE = 27;
+	
 	/** @var ChestInventory */
 	protected $inventory;
 	/** @var DoubleChestInventory */
@@ -42,12 +43,12 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 		}
 		
 		for($i = 0; $i < $this->getSize(); ++$i){
-			$this->inventory->setItem($i, $this->getItem($i));
+			$this->inventory->setItem($i, $this->getItem($i), false);
 		}
 	}
 
 	public function close(){
-		if($this->closed === false){
+		if(!$this->closed){
 			foreach($this->getInventory()->getViewers() as $player){
 				$player->removeWindow($this->getInventory());
 			}
@@ -72,7 +73,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 	 * @return int
 	 */
 	public function getSize(){
-		return 27;
+		return Chest::SIZE;
 	}
 
 	/**
@@ -115,7 +116,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 
 		$d = NBT::putItemHelper($item, $index);
 
-		if($item->getId() === Item::AIR or $item->getCount() <= 0){
+		if($item->isAir() || $item->getCount() <= 0){
 			if($i >= 0){
 				unset($this->namedtag->Items[$i]);
 			}
@@ -140,6 +141,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 		if($this->isPaired() and $this->doubleInventory === null){
 			$this->checkPairing();
 		}
+		
 		return $this->doubleInventory instanceof DoubleChestInventory ? $this->doubleInventory : $this->inventory;
 	}
 
@@ -253,13 +255,6 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 	}
 
 	public function getSpawnCompound(){
-		if(Translate::checkTurkish() === "yes"){
-			$paired = "§6Geniş Sandık";
-			$unpaired = "§6Sandık";
-		}else{
-			$paired = "§6Large Chest";
-			$unpaired = "§6Chest";
-		}
 		if($this->isPaired()){
 			$c = new CompoundTag("", [
 				new StringTag("id", Tile::CHEST),
@@ -267,16 +262,14 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 				new IntTag("y", (int) $this->y),
 				new IntTag("z", (int) $this->z),
 				new IntTag("pairx", (int) $this->namedtag["pairx"]),
-				new IntTag("pairz", (int) $this->namedtag["pairz"]),
-				new StringTag("CustomName", $paired)
+				new IntTag("pairz", (int) $this->namedtag["pairz"])
 			]);
 		}else{
 			$c = new CompoundTag("", [
 				new StringTag("id", Tile::CHEST),
 				new IntTag("x", (int) $this->x),
 				new IntTag("y", (int) $this->y),
-				new IntTag("z", (int) $this->z),
-				new StringTag("CustomName", $unpaired)
+				new IntTag("z", (int) $this->z)
 			]);
 		}
 

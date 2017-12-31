@@ -13,6 +13,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\overload\CommandParameter;
 use pocketmine\event\TranslationContainer;
 use pocketmine\utils\TextFormat;
 use pocketmine\Player;
@@ -28,6 +29,9 @@ class GamemodeCommand extends VanillaCommand{
 			["gm"]
 		);
 		$this->setPermission("pocketmine.command.gamemode");
+		
+		$this->getOverload("default")->setParameter(0, new CommandParameter("gamemode", CommandParameter::TYPE_STRING, false));
+		$this->getOverload("default")->setParameter(1, new CommandParameter("player", CommandParameter::TYPE_TARGET, true));
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -43,7 +47,7 @@ class GamemodeCommand extends VanillaCommand{
 		$gameMode = (int) Server::getGamemodeFromString($args[0]);
 
 		if($gameMode === -1){
-			$sender->sendMessage("§cBilinmeyen Oyun Modu!");
+			$sender->sendMessage(new TranslationContainer(TextFormat::RED . "commands.gamemode.unknownGamemode"));
 			return true;
 		}
 
@@ -60,7 +64,7 @@ class GamemodeCommand extends VanillaCommand{
 		}
 
 		if($target->setGamemode($gameMode) === false){
-			$sender->sendMessage(TextFormat::RED . "Komut Uygulanırken Bilinmeyen Hata Oluştu!");
+			$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.exception"));
 		}else{
 			if($target === $sender){
 				Command::broadcastCommandMessage($sender, new TranslationContainer("commands.gamemode.success.self", [Server::getGamemodeString($gameMode)]));

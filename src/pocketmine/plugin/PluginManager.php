@@ -122,7 +122,14 @@ class PluginManager{
 	public function getPlugins(){
 		return $this->plugins;
 	}
-
+	
+	/**
+	 * @return int
+	 */
+	public function getPluginCount(){
+		return count($this->plugins);
+	}
+	
 	/**
 	 * @param string         $path
 	 * @param PluginLoader[] $loaders
