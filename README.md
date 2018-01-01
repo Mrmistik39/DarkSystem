@@ -145,9 +145,6 @@ PORT: **19130**<br>
   * Code taken from Turanic.
   * Allows to create more beautiful texts.
   * *For developers* Example: **TextUtils::center($message)** ---> makes the message in center.
-- [ ] BlockLauncher join Blocking
-  * If you hate hackers, this is for you.
-  * How to use? - It is fully automatic.
 - [x] Code is clean, FAST and SAFE, coded in PHP.
 - [x] Advanced Config **(pocketmine_advanced.yml)**
 - [x] DarkBot (Uncontinued)
