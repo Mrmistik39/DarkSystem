@@ -1337,7 +1337,6 @@ class Server extends DarkSystem{
 		$this->konsol = $knsol;
 		$this->filePath = $filePath;
 		$this->translate = new Translate($this);
-		$this->translate->prepareLang();
 		$this->themeManager = new ThemeManager($this);
 		try{
 			if(Translate::checkTurkish() === "yes"){
