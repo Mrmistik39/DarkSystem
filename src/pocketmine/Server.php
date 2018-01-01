@@ -1852,7 +1852,7 @@ class Server extends DarkSystem{
 		$version = $this->getFormattedVersion();
 		$this->version = $version;
 		$mcpe = $this->getVersion();
-		$protocol = ProtocolInfo::CURRENT_PROTOCOL;
+		$protocol = ProtocolInfo::NEWEST_PROTOCOL;
 		$codename = $this->getCodename();
 		
 		$splash = $this->getSplash();
