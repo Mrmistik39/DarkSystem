@@ -26,11 +26,11 @@ class Translate{
 	
     public static function checkTurkish(){
     	$isTurkish = "no";
-    	if(!file_exists(\pocketmine\DATA . "sunucu.properties")){
+    	/*if(!file_exists(\pocketmine\DATA . "sunucu.properties")){
     	    $isTurkish = "no";
     	}elseif(file_exists(\pocketmine\DATA . "sunucu.properties")){
     	    $isTurkish = "yes";
-    	}
+    	}*/
     	return $isTurkish;
     }
     
