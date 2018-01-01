@@ -13,7 +13,7 @@ main:
  
 server:
  #Allows to show server settings on client settings tab.
- show-server-settings: falsez
+ show-server-settings: false
  
 messages:
  #Message to display when an unknown command is written

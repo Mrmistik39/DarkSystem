@@ -4445,7 +4445,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		if($this->startAction > -1 && $this->getDataFlag(Player::DATA_FLAGS, Player::DATA_FLAG_ACTION)){
 			if($this->getItemInHand()->getId() === Item::BOW){
 				$bow = $this->getItemInHand();
-				if($this->isSpectator() && !$this->inventory->contains(Item::get(Item::ARROW, 0, 1))){
+				if($this->isLiving() && !$this->inventory->contains(Item::get(Item::ARROW, 0, 1))){
 					$this->inventory->sendContents($this);
 					return true;
 				}
