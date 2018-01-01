@@ -1106,11 +1106,10 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		$pk->x = $this->spawnPosition->x;
 		$pk->y = $this->spawnPosition->y;
 		$pk->z = $this->spawnPosition->z;
-		//Sets players x, y, z to spawn positions x, y, z
-		$this->x = $this->spawnPosition->x;
-		$this->y = $this->spawnPosition->y;
-		$this->z = $this->spawnPosition->z;
 		$this->dataPacket($pk);
+		//$this->x = $this->spawnPosition->x;
+		//$this->y = $this->spawnPosition->y;
+		//$this->z = $this->spawnPosition->z;
 	}
 
 	public function stopSleep(){
@@ -3444,7 +3443,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		$nbt->lastPlayed = new LongTag("lastPlayed", floor(microtime(true) * 1000));
 		parent::__construct($this->level, $nbt);
 		$this->server->addOnlinePlayer($this);
-		if($this->spawnPosition === null && isset($this->namedtag->Level) && ($level = $this->server->getLevelByName($this->namedtag["Level"])) instanceof Level){
+		if(is_null($this->spawnPosition) && isset($this->namedtag->Level) && ($level = $this->server->getLevelByName($this->namedtag["Level"])) instanceof Level){
 			$this->spawnPosition = new Position($this->namedtag["SpawnX"], $this->namedtag["SpawnY"], $this->namedtag["SpawnZ"], $level);
 		}
 		$spawnPosition = $this->getSpawn();
@@ -3465,7 +3464,12 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		$pk->time = $this->level->getTime();
 		$pk->started = true;
 		$this->dataPacket($pk);
-		$this->setSpawn($spawnPosition);
+		//$this->setSpawn($spawnPosition);
+		$pk = new SetSpawnPositionPacket();
+		$pk->x = $spawnPosition->x;
+		$pk->y = $spawnPosition->y;
+		$pk->z = $spawnPosition->z;
+		$this->dataPacket($pk);
 		$pk = new SetDifficultyPacket();
 		$pk->difficulty = $this->server->getDifficulty();
 		$this->dataPacket($pk);
@@ -3480,9 +3484,9 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			TF::GREEN . $this->randomClientId . TF::WHITE,
 			$this->id,
 			$this->level->getName() . TF::SPACE . TF::YELLOW . "Folder Name:" . TF::SPACE . TF::RESET . $this->level->getFolderName(),
-			round($this->x),
-			round($this->y),
-			round($this->z)
+			$spawnPosition->x,
+			$spawnPosition->y,
+			$spawnPosition->z
 		]));
 		}else{
 		$this->server->getLogger()->info($this->server->getLanguage()->translateString("pocketmine.player.logIn", [
@@ -3492,9 +3496,9 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			TF::GREEN . $this->randomClientId . TF::WHITE,
 			$this->id,
 			$this->level->getName(),
-			round($this->x),
-			round($this->y),
-			round($this->z)
+			$spawnPosition->x,
+			$spawnPosition->y,
+			$spawnPosition->z
 		]));
 		}
 		$slots = [];
