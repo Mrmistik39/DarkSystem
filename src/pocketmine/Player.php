@@ -1986,7 +1986,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 
 				$this->startAction = -1;
 				$this->setDataFlag(Player::DATA_FLAGS, Player::DATA_FLAG_ACTION, false);
-				//Timings::$timerActionPacket->stopTiming();
 				break;
 			case "REMOVE_BLOCK_PACKET":
 				if($this->isAdventure() || $this->isSpectator()){
@@ -2640,8 +2639,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 				$this->server->getPluginManager()->callEvent($ev);
 				break;
 			case "SERVER_SETTINGS_REQUEST_PACKET":
-				$allowServerSettings = false; //TODO
-				if($allowServerSettings){
+				if($this->server->getSoftConfig("server.show-server-settings", "false")){
 					$this->sendServerSettings($this->getDefaultServerSettings());
 				}
 				break;
@@ -3473,6 +3471,13 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		$pk = new SetDifficultyPacket();
 		$pk->difficulty = $this->server->getDifficulty();
 		$this->dataPacket($pk);
+		if($this->getHealth() <= 0){
+			$pk = new RespawnPacket();
+			$pk->x = $spawnPosition->x;
+			$pk->y = $spawnPosition->y + $this->getEyeHeight();
+			$pk->z = $spawnPosition->z;
+			$this->dataPacket($pk);
+		}
 		$this->sendAttributes(true);
 		$this->setNameTagVisible(true);
 		$this->setNameTagAlwaysVisible(true);
@@ -4335,7 +4340,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 					($item->getDamage() != $ingredient->getDamage() && $ingredient->getDamage() !== 32767) || 
 					$item->count < $ingredient->count;
 				if($isItemsNotEquals){
-					throw new \Exception("Receive bad recipe");
+					throw new \Exception("Received bad recipe");
 				}
 				
 				$firstIndex = $i + 1;
@@ -4353,9 +4358,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		if($this->isSpectator()){
 			return false;
 		}
-		if(!isset($this->actionsNum["CRACK_BLOCK"])){
-			$this->actionsNum["CRACK_BLOCK"] = 0;
-		}
 		$recipients = $this->getViewers();
 		$recipients[] = $this;
 		$blockId = $this->level->getBlockIdAt($packet->x, $packet->y, $packet->z);
@@ -4364,8 +4366,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			"y" => $packet->y,
 			"z" => $packet->z
 		];
-		$isNeedSendSound = $this->actionsNum["CRACK_BLOCK"] % 4 == 0;
-		$this->actionsNum["CRACK_BLOCK"]++;
 		$pk = new LevelEventPacket();
 		$pk->evid = LevelEventPacket::EVENT_PARTICLE_CRACK_BLOCK;
 		$pk->x = $packet->x;
@@ -4374,9 +4374,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		$pk->data = $blockId;
 		foreach($recipients as $r){
 			//$r->dataPacket($pk);
-			if($isNeedSendSound){
-				$r->sendSound(LevelSoundEventPacket::SOUND_HIT, $blockPos, 1, $blockId);
-			}
+			$r->sendSound(LevelSoundEventPacket::SOUND_HIT, $blockPos, 1, $blockId);
 		}
 		return true;
 	}
@@ -4416,6 +4414,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 	
 	protected function advancedJump(){
 		$this->jumping = true;
+		$this->setMotion(new Vector3(0, 0.4, 0));
 		/*if($this->is120()){
 			if($this->isMoving() && $this->isJumping()){
 				//$this->speed = new Vector3(0.1, 0.1, 0.1);
@@ -4446,7 +4445,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		if($this->startAction > -1 && $this->getDataFlag(Player::DATA_FLAGS, Player::DATA_FLAG_ACTION)){
 			if($this->getItemInHand()->getId() === Item::BOW){
 				$bow = $this->getItemInHand();
-				if($this->isLiving() && !$this->inventory->contains(Item::get(Item::ARROW, 0, 1))){
+				if($this->isSpectator() && !$this->inventory->contains(Item::get(Item::ARROW, 0, 1))){
 					$this->inventory->sendContents($this);
 					return true;
 				}

@@ -157,7 +157,20 @@ class NBT{
 
 		return true;
 	}
-
+	
+	public static function combineCompoundTags(CompoundTag $tag1, CompoundTag $tag2, $override = false){
+		$tag1 = clone $tag1;
+		foreach($tag2 as $k => $v){
+			if(!($v instanceof Tag)){
+				continue;
+			}
+			if(!isset($tag1->{$k}) or (isset($tag1->{$k}) and $override)){
+				$tag1->{$k} = clone $v;
+			}
+		}
+		return $tag1;
+	}
+	
 	public static function parseJSON($data, &$offset = 0){
 		$len = strlen($data);
 		for(; $offset < $len; ++$offset){
@@ -167,7 +180,7 @@ class NBT{
 				$data = NBT::parseCompound($data, $offset);
 				return new CompoundTag("", $data);
 			}elseif($c !== " " && $c !== "\r" && $c !== "\n" && $c !== "\t"){
-				throw new \Exception("Sözdizimi Hatası: unexpected '$c' at offset $offset");
+				throw new \Exception("Syntax Error: unexpected '$c' at offset $offset");
 			}
 		}
 
@@ -308,14 +321,14 @@ class NBT{
 				if($type === null){
 					$type = NBT::TAG_String;
 				}elseif($inQuotes){
-					throw new \Exception("Sözdizimi Hatası: invalid quote at offset $offset");
+					throw new \Exception("Syntax Error: invalid quote at offset $offset");
 				}
 			}elseif($c === "\\"){
 				$value .= isset($data{$offset + 1}) ? $data{$offset + 1} : "";
 				++$offset;
 			}elseif($c === "{" && !$inQuotes){
 				if($value !== ""){
-					throw new \Exception("Sözdizimi Hatası: invalid CompoundTag start at offset $offset");
+					throw new \Exception("Syntax Error: invalid CompoundTag start at offset $offset");
 				}
 				++$offset;
 				$value = NBT::parseCompound($data, $offset);
@@ -323,7 +336,7 @@ class NBT{
 				break;
 			}elseif($c === "[" && !$inQuotes){
 				if($value !== ""){
-					throw new \Exception("Sözdizimi Hatası: invalid list start at offset $offset");
+					throw new \Exception("Syntax Error: invalid list start at offset $offset");
 				}
 				++$offset;
 				$value = NBT::parseList($data, $offset);
@@ -335,7 +348,7 @@ class NBT{
 		}
 
 		if($value === ""){
-			throw new \Exception("Sözdizimi Hatası: invalid empty value at offset $offset");
+			throw new \Exception("Syntax Error: invalid empty value at offset $offset");
 		}
 
 		if($type === null && strlen($value) > 0){
@@ -402,7 +415,7 @@ class NBT{
 		}
 
 		if($key === ""){
-			throw new \Exception("Sözdizimi Hatası: invalid empty key at offset $offset");
+			throw new \Exception("Syntax Error: invalid empty key at offset $offset");
 		}
 
 		return $key;

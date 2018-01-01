@@ -11,6 +11,10 @@ main:
  #Sunucu Lobi Dünya İsmi (Klasör İsmi)
  lobby-level: world
  
+server:
+ #Sunucu Yazılımı Bilgilerini Ayarlar Menüsünde Gösterilmesini Aktif Eder
+ show-server-settings: false
+ 
 messages:
  #Bilinmeyen Bir Komut Yazıldığında Gösterilecek Mesaj
  unknown-command: "Bilinmeyen Komut!"
@@ -27,6 +31,3 @@ inventory:
  #Öldüğünde Envanteri Koru
  keep: false
  
-troll:
- #Sandık Açıldığında Creeper Sesi Çıkarır
- chest-sound: false

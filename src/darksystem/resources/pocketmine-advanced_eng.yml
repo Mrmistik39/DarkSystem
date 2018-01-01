@@ -11,6 +11,10 @@ main:
  #Server lobby world name (Folder name)
  lobby-level: world
  
+server:
+ #Allows to show server settings on client settings tab.
+ show-server-settings: falsez
+ 
 messages:
  #Message to display when an unknown command is written
  unknown-command: "Unknown Command!"
@@ -27,6 +31,3 @@ inventory:
  #Keep inventory after death
  keep: false
  
-troll:
- #Creeper sound when chest open
- chest-sound: false

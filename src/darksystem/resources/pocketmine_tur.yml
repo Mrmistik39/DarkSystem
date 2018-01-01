@@ -13,7 +13,7 @@ settings:
  #Seçilen Dilin Oyun İçinde Aktif Olması İçin Ayarı "true" Yapın.
  force-language: true
  #Sunucu Durdurulduğunda Oyunculara Gösterilecek Mesaj
- shutdown-message: "§bSunucu Yeniden Başlatılıyor Veya Durduruluyor..."
+ shutdown-message: "Sunucu Durduruldu"
  #Farklı Yollarla Eklenti Listesinin Gösterilmesi
  query-plugins: false
  #API Mesajları

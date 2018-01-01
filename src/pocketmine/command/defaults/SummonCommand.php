@@ -136,7 +136,7 @@ class SummonCommand extends VanillaCommand{
 			$sender->sendMessage("Successfully spawned entity $type at ($x, $y, $z)");
 			return true;
 		}else{
-			$sender->sendMessage(TextFormat::RED . "An error occurred when spawning the entity $type");
+			$sender->sendMessage(TextFormat::RED . "An error occurred when spawning the entity or not found: $type");
 			return false;
 		}
 	}
