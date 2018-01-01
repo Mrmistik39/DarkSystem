@@ -87,4 +87,5 @@ class FloatingText extends Entity{
 
 		parent::spawnTo($player);
 	}
+	
 }

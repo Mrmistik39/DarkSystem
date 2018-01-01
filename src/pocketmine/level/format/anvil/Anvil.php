@@ -174,7 +174,7 @@ class Anvil extends McRegion{
 	}
 
 	public static function createChunkSection($Y){
-		return new ChunkSection(new CompoundTag(null, [
+		return new ChunkSection(new CompoundTag("", [
 			"Y" => new ByteTag("Y", $Y),
 			"Blocks" => new ByteArrayTag("Blocks", str_repeat("\x00", 4096)),
 			"Data" => new ByteArrayTag("Data", str_repeat("\x00", 2048)),

@@ -20,47 +20,21 @@ class Translate{
 	
 	public static $result;
 	private $server;
-	private static $servers;
-
+	
 	public function __construct(Server $server){
 		$this->server = $server;
 	}
 	
-	public function prepareLang(){
-		
-	}
-	
-	public function prepareLan(){
-		$isTurkish = "no";
-		
-    	if(!file_exists(\pocketmine\DATA . "sunucu.properties") && !file_exists(\pocketmine\DATA . "yoneticiler.json") && !file_exists(\pocketmine\DATA . "beyaz-liste.json")){
-    	    $isTurkish = "no";
-    	}else{
-            $isTurkish = "yes";
-    	}
-    
-    	Translate::$result = $isTurkish;
-    
-    	return true;
-    }
-    
     public static function checkTurkish(){
     	$isTurkish = "no";
-    	if(!file_exists(\pocketmine\DATA . "sunucu.properties") && !file_exists(\pocketmine\DATA . "yoneticiler.json") && !file_exists(\pocketmine\DATA . "beyaz-liste.json")){
-    	    $isTurkish = "no";
-    	}else{
-            $isTurkish = "yes";
+    	if(file_exists(\pocketmine\DATA . "sunucu.properties")){
+    	    $isTurkish = "yes";
     	}
-    
     	return $isTurkish;
     }
     
-    public static function checkTurkis(){
-    	return Translate::$result;
-    }
-    
     public static function getServer(){
-    	return Translate::$servers;
+    	return $this->server;
     }
     
 }

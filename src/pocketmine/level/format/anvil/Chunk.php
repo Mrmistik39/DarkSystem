@@ -215,7 +215,7 @@ class Chunk extends BaseChunk{
 			if ($section instanceof EmptyChunkSection){
 				continue;
 			}
-			$nbt->Sections[$section->getY()] = new CompoundTag(null, [
+			$nbt->Sections[$section->getY()] = new CompoundTag("", [
 				"Y" => new ByteTag("Y", $section->getY()),
 				"Blocks" => new ByteArrayTag("Blocks", $section->getIdArray()),
 				"Data" => new ByteArrayTag("Data", $section->getDataArray()),
@@ -264,7 +264,7 @@ class Chunk extends BaseChunk{
 			if ($section instanceof EmptyChunkSection){
 				continue;
 			}
-			$nbt->Sections[$section->getY()] = new CompoundTag(null, [
+			$nbt->Sections[$section->getY()] = new CompoundTag("", [
 				"Y" => new ByteTag("Y", $section->getY()),
 				"Blocks" => new ByteArrayTag("Blocks", $section->getIdArray()),
 				"Data" => new ByteArrayTag("Data", $section->getDataArray()),

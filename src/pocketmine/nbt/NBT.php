@@ -70,7 +70,7 @@ class NBT{
 
 		if($item->hasCompoundTag()){
 			$tag->tag = clone $item->getNamedTag();
-			$tag->tag->setName("tag");
+			//$tag->tag->setName("tag");
 		}
 
 		return $tag;
@@ -531,7 +531,7 @@ class NBT{
 				$tag = new IntArrayTag($this->checkGetString($new));
 				$tag->read($this);
 				break;
-
+				
 			case NBT::TAG_End:
 				default;
 				$tag = new EndTag;
@@ -629,11 +629,11 @@ class NBT{
 	
 	public function getVarInt(){
 		$result = $shift = 0;
-		do {
+		do{
 			$byte = $this->getByte();
 			$result |= ($byte & 0x7f) << $shift;
 			$shift += 7;
-		} while ($byte > 0x7f);
+		}while($byte > 0x7f);
 		return $result;
 	}
 	
