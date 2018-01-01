@@ -919,7 +919,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 	}
 	
 	protected function doFirstSpawn(){
-		$this->server->getPluginManager()->callEvent($ev = new PlayerLoginEvent($this, "Eklenti Hatası"));
+		$this->server->getPluginManager()->callEvent($ev = new PlayerLoginEvent($this, "Plugin Reason"));
 		if($ev->isCancelled()){
 			$this->close($ev->getKickMessage());
 			return false;
@@ -950,7 +950,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 				}
 			}
 		}
-		$this->teleport($this->getSpawn());
+		$this->teleport($this->level->getSafeSpawn());
 		$this->server->getPluginManager()->callEvent($ev = new PlayerJoinEvent($this, ""));
 		if($this->spawned){
 			foreach($this->server->getOnlinePlayers() as $p){
@@ -1084,7 +1084,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		}
 
 		$this->sleeping = clone $pos;
-		$this->teleport(new Position($pos->x + 0.5, $pos->y - 0.5, $pos->z + 0.5, $this->level));
+		$this->teleport(new Vector3($pos->x + 0.5, $pos->y - 0.5, $pos->z + 0.5));
 			
 		$this->setDataProperty(Player::DATA_PLAYER_BED_POSITION, Player::DATA_TYPE_POS, [$pos->x, $pos->y, $pos->z]);
 		$this->setDataFlag(Player::DATA_PLAYER_FLAGS, Player::DATA_PLAYER_FLAG_SLEEP, true);
@@ -1100,12 +1100,16 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		}else{
 			$level = $pos->getLevel();
 		}
-		
+		//Vector3 to Position
 		$this->spawnPosition = new Position($pos->x, $pos->y, $pos->z, $level);
 		$pk = new SetSpawnPositionPacket();
-		$pk->x = (int) $this->spawnPosition->x;
-		$pk->y = (int) $this->spawnPosition->y;
-		$pk->z = (int) $this->spawnPosition->z;
+		$pk->x = $this->spawnPosition->x;
+		$pk->y = $this->spawnPosition->y;
+		$pk->z = $this->spawnPosition->z;
+		//Sets players x, y, z to spawn positions x, y, z
+		$this->x = $this->spawnPosition->x;
+		$this->y = $this->spawnPosition->y;
+		$this->z = $this->spawnPosition->z;
 		$this->dataPacket($pk);
 	}
 
@@ -3427,6 +3431,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			$nbt->playerGameType = new IntTag("playerGameType", $this->gamemode);
 		}
 		$this->allowFlight = $this->isCreative();
+		//Sets level
 		if(is_null(($level = $this->server->getLevelByName($nbt["Level"])))){
 			$this->setLevel($this->server->getDefaultLevel());
 			$nbt["Level"] = $this->level->getName();
@@ -3436,22 +3441,16 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		}else{
 			$this->setLevel($level);
 		}
-		if(!$nbt instanceof CompoundTag){
-			$this->close("Corrupt joining data, check your connection.");
-			return false;
-		}
 		$nbt->lastPlayed = new LongTag("lastPlayed", floor(microtime(true) * 1000));
 		parent::__construct($this->level, $nbt);
 		$this->server->addOnlinePlayer($this);
-		if(is_null($this->spawnPosition) && isset($this->namedtag->Level) && ($level = $this->server->getLevelByName($this->namedtag["Level"])) instanceof Level){
+		if($this->spawnPosition === null && isset($this->namedtag->Level) && ($level = $this->server->getLevelByName($this->namedtag["Level"])) instanceof Level){
 			$this->spawnPosition = new Position($this->namedtag["SpawnX"], $this->namedtag["SpawnY"], $this->namedtag["SpawnZ"], $level);
-		}else{
-			$spawnPosition = new Position($this->level->getSafeSpawn());
 		}
 		$spawnPosition = $this->getSpawn();
 		$pk = new StartGamePacket();
 		$pk->seed = -1;
-		$pk->dimension = 0;
+		$pk->dimension = Level::DIMENSION_NORMAL;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -3466,11 +3465,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		$pk->time = $this->level->getTime();
 		$pk->started = true;
 		$this->dataPacket($pk);
-		$pk = new SetSpawnPositionPacket();
-		$pk->x = $spawnPosition->x;
-		$pk->y = $spawnPosition->y;
-		$pk->z = $spawnPosition->z;
-		$this->dataPacket($pk);
+		$this->setSpawn($spawnPosition);
 		$pk = new SetDifficultyPacket();
 		$pk->difficulty = $this->server->getDifficulty();
 		$this->dataPacket($pk);

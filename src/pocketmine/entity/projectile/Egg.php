@@ -17,6 +17,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\Network;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\entity\Projectile;
+use pocketmine\entity\Entity;
 use pocketmine\Player;
 
 class Egg extends Projectile{

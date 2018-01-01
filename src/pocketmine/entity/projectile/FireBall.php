@@ -12,7 +12,6 @@
 namespace pocketmine\entity\projectile;
 
 use pocketmine\level\Level;
-use pocketmine\level\format\FullChunk;
 use pocketmine\level\particle\CriticalParticle;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;

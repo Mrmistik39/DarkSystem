@@ -12,11 +12,10 @@
 namespace pocketmine\entity\projectile;
 
 use pocketmine\level\Level;
-use pocketmine\level\format\FullChunk;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\Network;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\entity\Projectile;
+use pocketmine\entity\Entity;
 use pocketmine\Player;
 
 class Snowball extends Projectile{
