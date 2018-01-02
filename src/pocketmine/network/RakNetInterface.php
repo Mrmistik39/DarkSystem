@@ -159,11 +159,7 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
 				if($buffer !== ""){
 					$pk = $this->getPacket($buffer, $player);
 					if(!is_null($pk)){
-						try{
-							$pk->decode($player->getPlayerProtocol());
-						}catch(\Exception $e){
-							return true;
-						}
+						$pk->decode($player->getPlayerProtocol());
 						$player->handleDataPacket($pk);
 					}
 				}
@@ -229,7 +225,7 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
 		if(isset($this->identifiers[$player])){			
 			$protocol = $player->getPlayerProtocol();							
 			$packet->encode($protocol);
-			if(!($packet instanceof BatchPacket) && strlen($packet->buffer) >= Network::$BATCH_THRESHOLD){
+			if(!$packet instanceof BatchPacket && strlen($packet->buffer) >= Network::$BATCH_THRESHOLD){
 				$this->server->batchPackets([$player], [$packet]);
 				return null;
 			}
@@ -252,11 +248,6 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
      */
 	private function getPacket($buffer, Player $player){
 		$playerProtocol = $player->getPlayerProtocol();
-		/*if($playerProtocol >= ProtocolInfo::PROTOCOL_110){
-			$pk = new BatchPacket($buffer);
-			$pk->is110 = true;
-			return $pk;
-		}*/
 		$pid = ord($buffer{0});
 		if(($data = $this->network->getPacket($pid, $playerProtocol)) === null){
 			return null;
