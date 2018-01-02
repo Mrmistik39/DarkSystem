@@ -31,7 +31,7 @@ class PlayerLoginEvent extends PlayerEvent implements Cancellable{
 	/** @var string */
 	protected $kickMessage;
 
-	public function __construct(Player $player, $kickMessage){
+	public function __construct(Player $player, $kickMessage = ""){
 		$this->player = $player;
 		$this->kickMessage = $kickMessage;
 	}

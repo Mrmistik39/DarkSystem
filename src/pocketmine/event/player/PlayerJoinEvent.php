@@ -30,7 +30,7 @@ class PlayerJoinEvent extends PlayerEvent{
 	/** @var string */
 	protected $joinMessage;
 
-	public function __construct(Player $player, $joinMessage){
+	public function __construct(Player $player, $joinMessage = ""){
 		$this->player = $player;
 		$this->joinMessage = $joinMessage;
 	}
