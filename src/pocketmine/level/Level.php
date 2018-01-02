@@ -1948,7 +1948,6 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	protected function processChunkRequest(){
 		if(count($this->chunkSendQueue) > 0){
 			$protocols = [];
-			$subClientsId = [];
 			$x = null;
 			$z = null;
 			foreach($this->chunkSendQueue as $index => $players){
@@ -1959,9 +1958,8 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 				foreach($players as $player){
 					if($player->isConnected() && isset($player->usedChunks[$index])){
 						$protocol = $player->getPlayerProtocol();
-						$subClientId = $player->getSubClientId();
 						if(advanced_cache === true){
-							$playerIndex = "{$protocol}:{$subClientId}";
+							$playerIndex = $player->getPlayerProtocol();
 							$cache = Cache::get("world:" . $this->getId() . ":{$index}");
 							if($cache !== false && isset($cache[$playerIndex])){
 								$player->sendChunk($x, $z, $cache[$playerIndex]);
@@ -1969,12 +1967,11 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 							}
 						}
 						$protocols[$protocol] = $protocol;
-						$subClientsId[$subClientId] = $subClientId;
 					}
 				}
 				if($protocols !== []){
 					$this->chunkSendTasks[$index] = true;
-					$task = $this->provider->requestChunkTask($x, $z, $protocols, $subClientsId);
+					$task = $this->provider->requestChunkTask($x, $z, $protocols);
 					if($task instanceof AsyncTask){
 						$this->server->getScheduler()->scheduleAsyncTask($task);
 					}
@@ -1999,7 +1996,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 				Cache::add($cacheId, $payload, 60);
 			}
 			foreach($this->chunkSendQueue[$index] as $player){
-				$playerIndex = $player->getPlayerProtocol() . ":" . $player->getSubClientId();
+				$playerIndex = $player->getPlayerProtocol();
 				if($player->isConnected() && isset($player->usedChunks[$index]) && isset($payload[$playerIndex])){
 					$player->sendChunk($x, $z, $payload[$playerIndex]);
 				}
@@ -2395,12 +2392,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	public function addEntityMotion($viewers, $entityId, $x, $y, $z){
 		$motion = [$entityId, $x, $y, $z];
 		foreach($viewers as $p){
-			$subClientId = $p->getSubClientId();
-			if($subClientId > 0 && ($parent = $p->getParent()) !== null){
-				$playerIdentifier = $parent->getIdentifier();
-			}else{
-				$playerIdentifier = $p->getIdentifier();
-			}
+			$playerIdentifier = $p->getIdentifier();
 			
 			if(!isset($this->motionToSend[$playerIdentifier])){
 				$this->motionToSend[$playerIdentifier] = [
@@ -2408,7 +2400,6 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 					'playerProtocol' => $p->getPlayerProtocol()
 				];
 			}
-			$motion[4] = $subClientId;
 			$this->motionToSend[$playerIdentifier]['data'][] = $motion;
 		}
 	}
@@ -2416,19 +2407,13 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	public function addEntityMovement($viewers, $entityId, $x, $y, $z, $yaw, $pitch, $headYaw = null, $isPlayer = false){
 		$move = [$entityId, $x, $y, $z, $yaw, $headYaw === null ? $yaw : $headYaw, $pitch, $isPlayer];
 		foreach($viewers as $p){
-			$subClientId = $p->getSubClientId();
-			if($subClientId > 0 && ($parent = $p->getParent()) !== null){
-				$playerIdentifier = $parent->getIdentifier();
-			}else{
-				$playerIdentifier = $p->getIdentifier();
-			}
+			$playerIdentifier = $p->getIdentifier();
 			if(!isset($this->moveToSend[$playerIdentifier])){
 				$this->moveToSend[$playerIdentifier] = [
 					'data' => [],
 					'playerProtocol' => $p->getPlayerProtocol()
 				];
 			}
-			$move[8] = $subClientId;
 			$this->moveToSend[$playerIdentifier]['data'][] = $move;
 		}
 	}
@@ -2493,16 +2478,11 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 		$this->chunkSendTasks[$index] = true;
 		$this->chunkSendQueue[$index] = [];
 		$protocols = [];
-		$subClientsId = [];
 		foreach($players as $p){
 			$this->chunkSendQueue[$index][spl_object_hash($p)] = $p;
 			$protocol = $p->getPlayerProtocol();
 			if(!isset($protocols[$protocol])){
 				$protocols[$protocol] = $protocol;
-			}
-			$subClientId = $p->getSubClientId();
-			if(!isset($subClientsId[$subClientId])){
-				$subClientsId[$subClientId] = $subClientId;
 			}
 		}
 		$this->provider->requestChunkTask($x, $z);
