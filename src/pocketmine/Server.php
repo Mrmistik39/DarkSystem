@@ -1997,9 +1997,9 @@ class Server extends DarkSystem{
 						$p->encode($protocol);
 					}
 					$newPackets[$protocol][] = $p->buffer;
+				}elseif($protocolsCount === 1){
+					$newPackets[$protocol][] = $p;
 				}
-			}elseif($protocolsCount === 1){
-				$newPackets[$protocol][] = $p;
 			}
 		}
 		$data = [];

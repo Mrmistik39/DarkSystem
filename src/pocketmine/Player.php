@@ -1025,7 +1025,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		if($this->is120()){
 			$disallowedPackets = Protocol120::getDisallowedPackets();
 			if(in_array(get_class($packet), $disallowedPackets)){
-                return;
+				return;
 			}
 		}
 		$this->server->getPluginManager()->callEvent($ev = new DataPacketSendEvent($this, $packet));
