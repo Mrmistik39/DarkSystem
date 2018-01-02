@@ -1985,82 +1985,30 @@ class Server extends DarkSystem{
 	public function batchPackets($players, $packets){
 		$targets = [];
 		$neededProtocol = [];
-		$neededSubClientsId = [];
-		foreach($players as $p){
-			$protocol = $p->getPlayerProtocol();
-			$subClientId = $p->getSubClientId();
-			$playerIdentifier = $p->getIdentifier();
-			if($subClientId > 0 && ($parent = $p->getParent()) !== null){
-				$playerIdentifier = $parent->getIdentifier();
-			}
-			$targets[$playerIdentifier] = [$playerIdentifier, $protocol];
-			$neededProtocol[$protocol] = $protocol;
-			$neededSubClientsId[$subClientId] = $subClientId;
-		}
-		$protocolsCount = count($neededProtocol);
 		$newPackets = [];
-		foreach($packets as $p){
-			foreach($neededProtocol as $protocol){
-				if($p instanceof DataPacket){
-					if($protocol >= ProtocolInfo::PROTOCOL_120){
-						foreach($neededSubClientsId as $subClientId){
-							$p->senderSubClientID = $subClientId;
-							$p->encode($protocol);
-							$newPackets[$protocol][] = $p->buffer;
-						}
-					}else{
-						if(!$p->isEncoded || $protocolsCount > 1){
-							$p->senderSubClientID = 0;
-							$p->encode($protocol);
-						}
-						$newPackets[$protocol][] = $p->buffer;
-					}
-				}elseif($protocolsCount == 1){
-					$newPackets[$protocol][] = $p;
-				}
-			}
-		}
-		
-		$data = [];
-		$data["packets"] = $newPackets;
-		$data["targets"] = $targets;
-		$data["networkCompressionLevel"] = $this->networkCompressionLevel;
-		$data["isBatch"] = true;
-		
-		$this->packetMgr->pushMainToThreadPacket(serialize($data));
-	}
-	
-	/*public function batchPackets($players, $packets){
-		$targets = [];
-		$neededProtocol = [];
 		foreach($players as $p){
 			$targets[] = array($p->getIdentifier(), $p->getPlayerProtocol());
 			$neededProtocol[$p->getPlayerProtocol()] = $p->getPlayerProtocol();
 		}
-		
-		$newPackets = [];
 		foreach($packets as $p){
 			foreach($neededProtocol as $protocol){
 				if($p instanceof DataPacket){
 					if(!$p->isEncoded || count($neededProtocol) > 1){
 						$p->encode($protocol);
 					}
-					
 					$newPackets[$protocol][] = $p->buffer;
-				}elseif(count($neededProtocol) == 1){
-					$newPackets[$protocol][] = $p;
 				}
+			}elseif($protocolsCount === 1){
+				$newPackets[$protocol][] = $p;
 			}
 		}
-		
 		$data = [];
 		$data["packets"] = $newPackets;
 		$data["targets"] = $targets;
 		$data["networkCompressionLevel"] = $this->networkCompressionLevel;
 		$data["isBatch"] = true;
-		
 		$this->packetMgr->pushMainToThreadPacket(serialize($data));
-	}*/
+	}
 	
 	public function enablePlugins($type){
 		foreach($this->pluginMgr->getPlugins() as $pl){
@@ -2332,7 +2280,7 @@ class Server extends DarkSystem{
 		foreach($players === null ? $this->playerList : $players as $p){
 			$protocol = $p->getPlayerProtocol();
 			if(!isset($readyPackets[$protocol])){
-				$pk->encode($protocol, $p->getSubClientId());
+				$pk->encode($protocol);
 				$batch = new BatchPacket();
 				$batch->payload = zlib_encode(Binary::writeVarInt(strlen($pk->getBuffer())) . $pk->getBuffer(), ZLIB_ENCODING_DEFLATE, 7);
 				$readyPackets[$protocol] = $batch;
@@ -2366,7 +2314,7 @@ class Server extends DarkSystem{
 				$pk->addFurnaceRecipe($r);
 			}
 			
-			$pk->encode($p->getPlayerProtocol(), $p->getSubClientId());
+			$pk->encode($p->getPlayerProtocol());
 			$pk->isEncoded = true;
 			$this->craftList[$p->getPlayerProtocol()] = $pk;
 		}

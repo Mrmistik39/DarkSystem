@@ -306,7 +306,7 @@ class PlayerInventory extends BaseInventory{
 	 */
 	public function getArmorContents(){
 		$armor = [];
-		for($i = 0; $i < 4; ++$i){
+		for($i = 0; $i < 5; ++$i){
 			$armor[$i] = $this->getItem($this->getSize() + $i);
 		}
 		return $armor;

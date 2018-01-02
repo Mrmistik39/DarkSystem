@@ -327,10 +327,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 	
 	protected $defaultServerSettings;
 	
-	protected $subClients = [];
-	
-	protected $subClientId = 0;
-
 	/** @var Player $parent */
 	protected $parent = null;
 	
@@ -376,10 +372,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 	
 	public function getClientId(){
 		return $this->randomClientId;
-	}
-	
-	public function getSubClientId(){
-		return $this->subClientId;
 	}
 	
 	public function getClientSecret(){
@@ -1030,15 +1022,9 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		if(!$this->connected){
 			return;
 		}
-		if($this->subClientId > 0 && $this->parent !== null){
-			$packet->senderSubClientID = $this->subClientId;
-            $this->parent->dataPacket($packet);
-			return;
-		}
 		if($this->is120()){
 			$disallowedPackets = Protocol120::getDisallowedPackets();
 			if(in_array(get_class($packet), $disallowedPackets)){
-				$packet->senderSubClientID = 0;
                 return;
 			}
 		}
@@ -1047,7 +1033,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			return;
 		}
 		$this->interface->putPacket($this, $packet, false);
-		$packet->senderSubClientID = 0;
 		return;
 	}
 	
@@ -1616,10 +1601,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		if(!$this->isOnline() && !in_array($packet->pname(), $beforeLoginAvailablePackets)){
 			return false;
 		}
-		if($packet->targetSubClientID > 0 && isset($this->subClients[$packet->targetSubClientID])){
-			$this->subClients[$packet->targetSubClientID]->handleDataPacket($packet);
-			return true;
-		}
 		switch($packet->pname()){
             case "SET_PLAYER_GAMETYPE_PACKET":
                 break;
@@ -1649,7 +1630,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 				$this->randomClientId = $packet->clientId;
 				$this->loginData = ["clientId" => $packet->clientId, "loginData" => null];
 				$this->uuid = $packet->clientUUID;
-				$this->subClientId = $packet->targetSubClientID;
 				if(!isset($this->count[$this->ip])){
 					$this->count[$this->ip] = 1;
 				}else{
@@ -2006,7 +1986,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 					break;
 				}
 				$position = ["x" => $target->x, "y" => $target->y, "z" => $target->z];
-				if($target instanceof Boat || ($target instanceof Minecart && $target->getType() == Minecart::TYPE_NORMAL)){
+				if($target instanceof Boat/* || ($target instanceof Minecart && $target->getType() == Minecart::TYPE_NORMAL)*/){
 					if($packet->action === InteractPacket::ACTION_RIGHT_CLICK){
 						$this->linkEntity($target);
 					}elseif($packet->action === InteractPacket::ACTION_LEFT_CLICK){
@@ -2647,15 +2627,9 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 				$this->sendLoginSuccess();
 				break;
 			case "SUB_CLIENT_LOGIN_PACKET":
-				$subPlayer = new static($this->interface, null, $this->ip, $this->port);
-				if($subPlayer->subAuth($packet, $this)){
-					$this->subClients[$packet->targetSubClientID] = $subPlayer;
-				}
 				break;
 			case "DISCONNECT_PACKET":
-				if($this->subClientId > 0){
-					$this->close("disconnectionScreen.client");
-				}
+				$this->close("disconnectionScreen.client");
 				break;
 				default;
 				break;
@@ -2860,14 +2834,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		
 		if(isset($this->count[$this->ip])){
 			$this->count[$this->ip]--;
-		}
-		
-		if($this->parent !== null){
-			$this->parent->removeSubClient($this->subClientId);
-		}else{
-			foreach($this->subClients as $subClient){
-				$subClient->close($reason);
-			}
 		}
 		
         Win10InvLogic::removeData($this);
@@ -3847,7 +3813,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		}
 	}
 	
-	public function setTitle($text, $subtext = "", $time = 36000){
+	public function setTitle($text, $subtitle = "", $time = 36000){
 		if($this->getPlayerProtocol() >= ProtocolInfo::PROTOCOL_105){
 			$pk = new SetTitlePacket();
 			$pk->type = SetTitlePacket::TITLE_TYPE_TIMES;
@@ -3856,10 +3822,10 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			$pk->fadeOutTime = 5;
 			$pk->stayTime = 20 * $time;
 			$this->dataPacket($pk);
-			if(!empty($subtext)){
+			if(!empty($subtitle)){
 				$pk = new SetTitlePacket();
 				$pk->type = SetTitlePacket::TITLE_TYPE_SUBTITLE;
-				$pk->text = $subtext;
+				$pk->text = $subtitle;
 				$this->dataPacket($pk);
 			}
 			
@@ -4682,54 +4648,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		}
 		
 		return true;
-	}
-	
-	public function removeSubClient($subClientId){
-		if(isset($this->subClients[$subClientId])){
-			unset($this->subClients[$subClientId]);
-		}
-	}
-	
-	public function subAuth($packet, Player $parent){
-		$this->username = TF::clean($packet->username);
-		$this->xblName = $this->username;
-		$this->displayName = $this->username;
-		$this->setNameTag($this->username);
-		$this->iusername = strtolower($this->username);
-		
-		$this->randomClientId = $packet->clientId;
-		$this->loginData = ["clientId" => $packet->clientId, "loginData" => null];
-		$this->uuid = $packet->clientUUID;
-		if(is_null($this->uuid)){
-			$this->close("disconnectionScreen.brokenClient");
-			return false;
-		}
-		
-		$this->parent = $parent;
-		$this->xuid = $packet->xuid;
-		$this->rawUUID = $this->uuid->toBinary();
-		$this->clientSecret = $packet->clientSecret;
-		$this->protocol = $parent->getPlayerProtocol();
-		$this->setSkin($packet->skin, $packet->skinName, $packet->skinGeometryName, $packet->skinGeometryData, $packet->capeData);
-		$this->subClientId = $packet->targetSubClientID;
-		
-		$this->deviceType = $parent->getDeviceOS();
-		$this->inventoryType = $parent->getInventoryType();
-		$this->languageCode = $parent->languageCode;
-		$this->serverAddress = $parent->serverAddress;
-		$this->clientVersion = $parent->clientVersion;
-		$this->originalProtocol = $parent->originalProtocol;
-
-		$this->identityPublicKey = $packet->identityPublicKey;
-		
-		$pk = new PlayStatusPacket();
-		$pk->status = PlayStatusPacket::LOGIN_SUCCESS;
-		$this->dataPacket($pk);
-		
-		$this->loggedIn = true;
-		$this->finishLogin();
-		
-		return $this->loggedIn;
 	}
 	
 	private function getNonValidProtocolMessage($protocol){
