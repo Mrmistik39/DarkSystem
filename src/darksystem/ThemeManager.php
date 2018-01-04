@@ -63,6 +63,7 @@ class ThemeManager{
     
     //ASCII Text Font: Doom
     public function getLogoTheme($version, $mcpe, $protocol, $codename, $splash){
+    	$splash = ""; //Splash is disabled
     	$name = $this->server->getSoftwareName();
     	if(mt_rand(1, 100) == 1){ //%1 chance
     	    $random = substr(base64_encode(random_bytes(20)), 3, 10);

@@ -17,6 +17,6 @@ interface ProtocolAPI{
 	
 	const CURRENT_PROTOCOL = Info::NEWEST_PROTOCOL;
 	
-	const BASE_PROTOCOL = Info::NEWEST_PROTOCOL;
+	const BASE_PROTOCOL = Info::OLDEST_PROTOCOL;
 	
 }

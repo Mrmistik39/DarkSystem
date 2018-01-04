@@ -768,7 +768,6 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 		}
 	}
 	
-	
 	public function isSpawned(Player $player){
 		if(isset($this->hasSpawned[$player->getId()])){
 			return true;
@@ -1065,7 +1064,7 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 		}
 		
 		if($this->y < 0 && !$this->dead){
-			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_VOID, 20);
+			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_VOID, 10);
 			$this->attack($ev->getFinalDamage(), $ev);
 			$hasUpdate = true;
 		}
@@ -1128,6 +1127,10 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 		}
 	}
 	
+	protected function applyGravity(){
+		$this->motionY -= $this->gravity;
+	}
+	
 	public function getDirectionVector(){
 		$y = -sin(deg2rad($this->pitch));
 		$xz = cos(deg2rad($this->pitch));
@@ -1167,6 +1170,7 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 			$this->fireTicks = $ticks;
 		}
 		$this->fireDamage = $damage;
+		$this->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_ONFIRE, true);
 	}
 
 	public function getDirection(){

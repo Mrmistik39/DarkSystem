@@ -16,9 +16,9 @@ abstract class PEPacket extends DataPacket{
 	const CLIENT_ID_MAIN_PLAYER = 0;
 	const CLIENT_ID_SERVER = 0;
 	
-	public $senderSubClientID = PEPacket::CLIENT_ID_SERVER;
+	public $senderID = PEPacket::CLIENT_ID_SERVER;
 	
-	public $targetSubClientID = PEPacket::CLIENT_ID_MAIN_PLAYER;
+	public $targetID = PEPacket::CLIENT_ID_MAIN_PLAYER;
 	
 	protected function checkLength($len){
 		if($this->offset + $len > strlen($this->buffer)){
@@ -28,9 +28,9 @@ abstract class PEPacket extends DataPacket{
 	
 	protected function getHeader($playerProtocol = 0){
 		if($playerProtocol >= Info::PROTOCOL_120) {
-			$this->senderSubClientID = $this->getByte();
-			$this->targetSubClientID = $this->getByte();
-			if($this->senderSubClientID > 4 || $this->targetSubClientID > 4){
+			$this->senderID = $this->getByte();
+			$this->targetID = $this->getByte();
+			if($this->senderID > 4 || $this->targetID > 4){
 				throw new \Exception(get_class($this) . ": Packet decode headers error");
 			}
 		}
@@ -40,8 +40,8 @@ abstract class PEPacket extends DataPacket{
 		$this->buffer = chr(PEPacket::$packetsIds[$playerProtocol][$this::PACKET_NAME]);
 		$this->offset = 0;
 		if($playerProtocol >= Info::PROTOCOL_120){
-			$this->putByte($this->senderSubClientID);
-			$this->putByte($this->targetSubClientID);
+			$this->putByte($this->senderID);
+			$this->putByte($this->targetID);
 			$this->offset = 2;
 		}
 	}

@@ -1560,42 +1560,41 @@ class Server extends DarkSystem{
 			$this->levelMetadata = new LevelMetadataStore();
 			
 			if(Translate::checkTurkish() === "yes"){
-			$this->operators = new Config($this->getDataPath() . "yoneticiler.json", Config::JSON);
-			$this->whitelist = new Config($this->getDataPath() . "beyaz-liste.json", Config::JSON);
-			if(file_exists($this->getDataPath() . "engelli.txt") && !file_exists($this->getDataPath() . "engelli-oyuncular.txt")){
-				@rename($this->getDataPath() . "engelli.txt", $this->getDataPath() . "engelli-oyuncular.txt");
-			}
-			
-			@touch($this->getDataPath() . "engelli-oyuncular.txt");
-			$this->banByName = new BanList($this->getDataPath() . "engelli-oyuncular.txt");
-			$this->banByName->load();
-			@touch($this->getDataPath() . "engelli-IPler.txt");
-			$this->banByIP = new BanList($this->getDataPath() . "engelli-IPler.txt");
-			$this->banByIP->load();
-			@touch($this->getDataPath() . "engelli-CIDler.txt");
-			$this->banByCID = new BanList($this->getDataPath() . "engelli-CIDler.txt");
-			$this->banByCID->load();
-			@touch($this->getDataPath() . "engelli-UUIDler.txt");
-			$this->banByUUID = new BanList($this->getDataPath() . "engelli-UUIDler.txt");
-			$this->banByUUID->load();
+				$this->operators = new Config($this->getDataPath() . "yoneticiler.json", Config::JSON);
+				$this->whitelist = new Config($this->getDataPath() . "beyaz-liste.json", Config::JSON);
+				if(file_exists($this->getDataPath() . "engelli.txt") && !file_exists($this->getDataPath() . "engelli-oyuncular.txt")){
+					@rename($this->getDataPath() . "engelli.txt", $this->getDataPath() . "engelli-oyuncular.txt");
+				}
+				@touch($this->getDataPath() . "engelli-oyuncular.txt");
+				$this->banByName = new BanList($this->getDataPath() . "engelli-oyuncular.txt");
+				$this->banByName->load();
+				@touch($this->getDataPath() . "engelli-IPler.txt");
+				$this->banByIP = new BanList($this->getDataPath() . "engelli-IPler.txt");
+				$this->banByIP->load();
+				@touch($this->getDataPath() . "engelli-CIDler.txt");
+				$this->banByCID = new BanList($this->getDataPath() . "engelli-CIDler.txt");
+				$this->banByCID->load();
+				@touch($this->getDataPath() . "engelli-UUIDler.txt");
+				$this->banByUUID = new BanList($this->getDataPath() . "engelli-UUIDler.txt");
+				$this->banByUUID->load();
 			}else{
-			$this->operators = new Config($this->getDataPath() . "ops.json", Config::JSON);
-			$this->whitelist = new Config($this->getDataPath() . "white-list.json", Config::JSON);
-			if(file_exists($this->getDataPath() . "banned.txt") && !file_exists($this->getDataPath() . "banned-players.txt")){
-				@rename($this->getDataPath() . "banned.txt", $this->getDataPath() . "banned-players.txt");
-			}
-			@touch($this->getDataPath() . "banned-players.txt");
-			$this->banByName = new BanList($this->getDataPath() . "banned-players.txt");
-			$this->banByName->load();
-			@touch($this->getDataPath() . "banned-ips.txt");
-			$this->banByIP = new BanList($this->getDataPath() . "banned-ips.txt");
-			$this->banByIP->load();
-			@touch($this->getDataPath() . "banned-cids.txt");
-			$this->banByCID = new BanList($this->getDataPath() . "banned-cids.txt");
-			$this->banByCID->load();
-			@touch($this->getDataPath() . "banned-uuids.txt");
-			$this->banByUUID = new BanList($this->getDataPath() . "banned-uuids.txt");
-			$this->banByUUID->load();
+				$this->operators = new Config($this->getDataPath() . "ops.json", Config::JSON);
+				$this->whitelist = new Config($this->getDataPath() . "white-list.json", Config::JSON);
+				if(file_exists($this->getDataPath() . "banned.txt") && !file_exists($this->getDataPath() . "banned-players.txt")){
+					@rename($this->getDataPath() . "banned.txt", $this->getDataPath() . "banned-players.txt");
+				}
+				@touch($this->getDataPath() . "banned-players.txt");
+				$this->banByName = new BanList($this->getDataPath() . "banned-players.txt");
+				$this->banByName->load();
+				@touch($this->getDataPath() . "banned-ips.txt");
+				$this->banByIP = new BanList($this->getDataPath() . "banned-ips.txt");
+				$this->banByIP->load();
+				@touch($this->getDataPath() . "banned-cids.txt");
+				$this->banByCID = new BanList($this->getDataPath() . "banned-cids.txt");
+				$this->banByCID->load();
+				@touch($this->getDataPath() . "banned-uuids.txt");
+				$this->banByUUID = new BanList($this->getDataPath() . "banned-uuids.txt");
+				$this->banByUUID->load();
 			}
 			
 			$this->maxPlayers = $this->getConfigInt("max-players", 25);

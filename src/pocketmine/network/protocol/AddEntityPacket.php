@@ -60,7 +60,7 @@ class AddEntityPacket extends PEPacket{
 		$this->putLFloat($this->pitch);
 		$this->putLFloat($this->yaw);
 		$this->putVarInt(count($this->attributes));
-		foreach ($this->attributes as $attribute) {
+		foreach($this->attributes as $attribute){
 			$this->putString($attribute['name']);
 			$this->putLFloat($attribute['min']);
 			$this->putLFloat($attribute['default']);
@@ -69,7 +69,7 @@ class AddEntityPacket extends PEPacket{
 		$meta = Binary::writeMetadata($this->metadata, $playerProtocol);
 		$this->put($meta);
 		$this->putVarInt(count($this->links));
-		foreach ($this->links as $link) {
+		foreach($this->links as $link){
 			$this->putVarInt($link['from']);
 			$this->putVarInt($link['to']);
 			$this->putByte($link['type']);

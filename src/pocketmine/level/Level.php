@@ -42,7 +42,6 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\item\Item;
 use pocketmine\level\format\Chunk;
-use pocketmine\level\format\FullChunk;
 use pocketmine\level\format\generic\BaseLevelProvider;
 use pocketmine\level\format\generic\EmptyChunkSection;
 use pocketmine\level\format\LevelProvider;
@@ -79,13 +78,11 @@ use pocketmine\utils\LevelException;
 use pocketmine\utils\MainLogger;
 use pocketmine\utils\ReversePriorityQueue;
 use darksystem\ChunkGenerator;
-use darksystem\crossplatform\DesktopPlayer;
 use pocketmine\level\generator\GenerationTask;
 use pocketmine\level\generator\Generator;
 use pocketmine\level\generator\GeneratorRegisterTask;
 use pocketmine\level\generator\GeneratorUnregisterTask;
 use pocketmine\utils\Random;
-use darksystem\crossplatform\network\protocol\Play\Server\OpenSignEditorPacket;
 use pocketmine\level\generator\LightPopulationTask;
 use pocketmine\level\generator\PopulationTask;
 use pocketmine\entity\monster\Monster;
@@ -151,7 +148,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	/** @var Player[][] */
 	protected $usedChunks = [];
 
-	/** @var FullChunk[]|Chunk[] */
+	/** @var Chunk[]|Chunk[] */
 	protected $unloadQueue = [];
 
 	protected $time;
@@ -160,7 +157,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 
 	private $folderName;
 
-	/** @var FullChunk[]|Chunk[] */
+	/** @var Chunk[]|Chunk[] */
 	private $chunks = [];
 
 	/** @var Block[][] */
@@ -917,7 +914,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	public function getFullLight(Vector3 $pos){
 		$chunk = $this->getChunk($pos->x >> 4, $pos->z >> 4, false);
 		$level = 0;
-		if($chunk instanceof FullChunk){
+		if($chunk instanceof Chunk){
 			$level = $chunk->getBlockSkyLight($pos->x & 0x0f, $pos->y & $this->getYMask(), $pos->z & 0x0f);
 			if($level < 15){
 				$level = max($chunk->getBlockLight($pos->x & 0x0f, $pos->y & $this->getYMask(), $pos->z & 0x0f));
@@ -1234,9 +1231,6 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 			if(!$ev->getInstaBreak() && ($player->lastBreak + $breakTime) >= microtime(true) - $delta){
 				return false;
 			}
-			if($player instanceof DesktopPlayer){
-				$ev->setInstaBreak(true);
-			}
 			$this->server->getPluginManager()->callEvent($ev);
 			if($ev->isCancelled()){
 				return false;
@@ -1389,24 +1383,6 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 					$ev->setCancelled(true);
 				}
 			}
-			if($player instanceof DesktopPlayer){
-				if($block instanceof Chest){
-					$num_side_chest = 0;
-					for($i = 2; $i <= 5; ++$i){
-						if(($side_chest = $block->getSide($i))->getId() === $block->getId()){
-							++$num_side_chest;
-							for($j = 2; $j <= 5; ++$j){
-								if($side_chest->getSide($j)->getId() === $side_chest->getId()){
-									$ev->setCancelled(true);
-								}
-							}
-						}
-					}
-					if($num_side_chest > 1){
-						$ev->setCancelled(true);
-					}
-				}
-			}
 			$this->server->getPluginManager()->callEvent($ev);
 			if($ev->isCancelled()){
 				return false;
@@ -1428,12 +1404,6 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 			]));
 			if($player instanceof Player){
 				$tile->namedtag->Creator = new StringTag("Creator", $player->getName());
-			}elseif($player instanceof DesktopPlayer){
-				$pk = new OpenSignEditorPacket();
-				$pk->x = $block->x;
-				$pk->y = $block->y;
-				$pk->z = $block->z;
-				$player->putRawPacket($pk);
 			}
 		}
 		$item->setCount($item->getCount() - 1);
@@ -1715,7 +1685,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	}
 
 	/**
-	 * @return FullChunk[]|Chunk[]
+	 * @return Chunk[]|Chunk[]
 	 */
 	public function getChunks(){
 		return $this->chunks;
@@ -1726,7 +1696,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	 * @param int  $z
 	 * @param bool $create
 	 *
-	 * @return FullChunk|Chunk
+	 * @return Chunk|Chunk
 	 */
 	public function getChunk($x, $z, $create = false){
 		if(isset($this->chunks[$index = Level::chunkHash($x, $z)])){
@@ -1743,7 +1713,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	 * @param int  $z
 	 * @param bool $create
 	 *
-	 * @return FullChunk|Chunk
+	 * @return Chunk|Chunk
 	 */
 	public function getChunkAt($x, $z, $create = false){
 		return $this->getChunk($x, $z, $create);
@@ -1753,7 +1723,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 		return isset($this->chunkLoaders[$index = Level::chunkHash($chunkX, $chunkZ)]) ? $this->chunkLoaders[$index] : [];
 	}
 	
-	public function generateChunkCallback($x, $z, FullChunk $chunk){
+	public function generateChunkCallback($x, $z, Chunk $chunk){
 		if($this->closed){
 			return;
 		}
@@ -1777,7 +1747,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 		}
 	}
 
-	public function setChunk($x, $z, FullChunk $chunk, $unload = true){
+	public function setChunk($x, $z, Chunk $chunk, $unload = true){
 		$index = Level::chunkHash($x, $z);
 		if($unload){
 			foreach($this->getUsingChunk($x, $z) as $player){
@@ -1935,7 +1905,6 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 		$this->server->getPluginManager()->callEvent(new SpawnChangeEvent($this, $previousSpawn));
 	}
 	
-	//public function requestChunk($x, $z, Player $player, $order = LevelProvider::ORDER_ZXY){
 	public function requestChunk($x, $z, Player $player){
 		$index = Level::chunkHash($x, $z);
 		if(!isset($this->chunkSendQueue[$index])){
@@ -2184,11 +2153,11 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	 *
 	 * @return bool
 	 */
-	public function isSpawnChunk($X, $Z){
+	public function isSpawnChunk($x, $z){
 		$spawnX = $this->provider->getSpawn()->getX() >> 4;
 		$spawnZ = $this->provider->getSpawn()->getZ() >> 4;
 
-		return abs($X - $spawnX) <= 1 && abs($Z - $spawnZ) <= 1;
+		return abs($x - $spawnX) <= 1 && abs($z - $spawnZ) <= 1;
 	}
 
 	/**
@@ -2203,7 +2172,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	 * @return bool|Position
 	 */
 	public function getSafeSpawn($spawn = null){
-		if(!($spawn instanceof Vector3) || $spawn->y < 1){
+		if(!$spawn instanceof Vector3 || $spawn->y < 1){
 			$spawn = $this->getSpawnLocation();
 		}
 		if($spawn instanceof Vector3){
