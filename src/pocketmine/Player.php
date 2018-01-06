@@ -1238,11 +1238,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		return true;
 	}
 	
-	protected function revertMovement(Vector3 $pos, $yaw = 0, $pitch = 0){
-		$this->sendPosition($pos, $yaw, $pitch, MovePlayerPacket::MODE_RESET);
-		$this->newPosition = null;
-	}
-	
 	protected function handleMovement($tickDiff){
 		if(!$this->isAlive() || !$this->spawned || $this->newPosition === null || $this->isSleeping()){
 			return;
@@ -3803,7 +3798,11 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 	public function isElytraActivated(){
 		return $this->elytraActivated;
 	}
-
+	
+	public function getProtocol(){
+		return $this->protocol;
+	}
+	
     public function getPlayerProtocol(){
 		return $this->protocol;
 	}
@@ -4703,45 +4702,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 			}else{
 				return TF::WHITE . "Please update your client version to join";
 			}
-		}
-	}
-	
-	public function sendFullPlayerList(){
-		$players = $this->server->getOnlinePlayers();
-		$isNeedSendXUID = $this->getOriginalProtocol() >= ProtocolInfo::PROTOCOL_140;
-		$playersWithProtocol140 = [];
-		$otherPlayers = [];
-		$players[] = $this;
-		$pk = new PlayerListPacket();
-		$pk->type = PlayerListPacket::TYPE_ADD;
-		foreach($players as $p){
-			$entry = [$p->getUniqueId(), $p->getId(), $p->getName(), $p->getSkinName(), $p->getSkinData(), $p->getCapeData(), $p->getSkinGeometryName(), $p->getSkinGeometryData()];
-			if($isNeedSendXUID){
-				$entry[] = $p->getXUID();
-			}
-			
-			$pk->entries[] = $entry;
-			if($p->getOriginalProtocol() >= ProtocolInfo::PROTOCOL_140){
-				$playersWithProtocol140[] = $p;
-			}else{
-				$otherPlayers[] = $p;
-			}
-		}
-		
-		$this->server->batchPackets([$this], [$pk]);
-		
-		if(count($playersWithProtocol140) > 0){
-			$pk = new PlayerListPacket();
-			$pk->type = PlayerListPacket::TYPE_ADD;
-			$pk->entries[] = [$this->getUniqueId(), $this->getId(), $this->getName(), $this->getSkinName(), $this->getSkinData(), $this->getCapeData(), $this->getSkinGeometryName(), $this->getSkinGeometryData(), $this->getXUID()];
-			$this->server->batchPackets($playersWithProtocol140, [$pk]);
-		}
-		
-		if(count($otherPlayers) > 0){
-			$pk = new PlayerListPacket();
-			$pk->type = PlayerListPacket::TYPE_ADD;
-			$pk->entries[] = [$this->getUniqueId(), $this->getId(), $this->getName(), $this->getSkinName(), $this->getSkinData(), $this->getCapeData(), $this->getSkinGeometryName(), $this->getSkinGeometryData()];
-			$this->server->batchPackets($otherPlayers, [$pk]);
 		}
 	}
 }

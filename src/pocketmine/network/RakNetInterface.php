@@ -284,7 +284,7 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
 	}
 	
 	private function isZlib($buffer){
-		if(ord($buffer{0}) == 120){
+		if(ord($buffer{0}) === 120){
 			return true;
 		}
 		return false;

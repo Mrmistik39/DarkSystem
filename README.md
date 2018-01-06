@@ -42,11 +42,7 @@ PORT: **19130**<br>
 - [x] More Biomes & Advanced Generator
   * DarkSystem supports more biomes than others softwares.
   * DarkSystem loads levels fast.
-- [x] Anti-BOT (Bot Protection)
-  * Blocks MCPE Bots joining from same ips. (Ex. MineBot)
-- [x] Anti-COOP Play
 - [x] Advanced RakNet
-  * Like bot protection
 - [x] Themes!
   * You can change theme in **server.properties**.
   * Available themes: **classic, dark, light, metal, energy, uranium**
