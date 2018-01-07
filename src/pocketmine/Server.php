@@ -63,6 +63,7 @@ use pocketmine\network\protocol\Info as ProtocolInfo;
 use pocketmine\network\protocol\BatchPacket;
 use pocketmine\network\protocol\CraftingDataPacket;
 use pocketmine\network\protocol\DataPacket;
+use pocketmine\network\protocol\Info;
 use pocketmine\network\protocol\PlayerListPacket;
 use pocketmine\network\query\QueryHandler;
 use pocketmine\network\RakNetInterface;
@@ -696,7 +697,7 @@ class Server extends DarkSystem{
 			return false;
 		}
 		
-		if(in_array($protocol, ProtocolInfo::ACCEPTED_PROTOCOLS) || $protocol === ProtocolInfo::OLDEST_PROTOCOL || $protocol === ProtocolInfo::NEWEST_PROTOCOL /**|| ($protocol > OLDEST_PROTOCOL && $protocol < NEWEST_PROTOCOL)*/){
+		if(in_array($protocol, ProtocolInfo::ACCEPTED_PROTOCOLS) || $protocol === ProtocolInfo::OLDEST_PROTOCOL || $protocol === ProtocolInfo::NEWEST_PROTOCOL || ($protocol > Info::OLDEST_PROTOCOL && $protocol < Info::NEWEST_PROTOCOL)){
 			return true;
 		}
 		
