@@ -13,6 +13,9 @@ namespace pocketmine\network\protocol;
 
 abstract class PEPacket extends DataPacket{
 	
+	public $senderID = 0;
+	public $targetID = 0;
+	
 	abstract public function encode($playerProtocol);
 
 	abstract public function decode($playerProtocol);
@@ -24,10 +27,13 @@ abstract class PEPacket extends DataPacket{
 	}
 	
 	protected function getHeader($playerProtocol = 0){
-		/*if($playerProtocol >= Info::PROTOCOL_120){
-			$this->senderSubClientID = $this->getByte();
-			$this->targetSubClientID = $this->getByte();
-		}*/
+		if($playerProtocol >= Info::PROTOCOL_120){
+			$this->senderID = $this->getByte();
+			$this->targetID = $this->getByte();
+			if($this->senderID > 4 || $this->targetID > 4){
+				throw new \Exception(get_class($this) . ": Packet decode headers error");
+			}
+		}
 	}
  
 	public function reset($playerProtocol = 0){
