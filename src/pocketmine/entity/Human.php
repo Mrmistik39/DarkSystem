@@ -11,6 +11,7 @@
 
 namespace pocketmine\entity;
 
+use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\inventory\EnderChestInventory;
 use pocketmine\inventory\PlayerInventory120;
 use pocketmine\inventory\InventoryHolder;
@@ -156,7 +157,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	public function getEnderChestInventory(){
 		return $this->enderChestInventory;
 	}
-	
+
 	protected function initEntity(){
 		$this->setDataFlag(Human::DATA_PLAYER_FLAGS, Human::DATA_PLAYER_FLAG_SLEEP, false);
 		$this->setDataProperty(Human::DATA_PLAYER_BED_POSITION, Human::DATA_TYPE_POS, [0, 0, 0]);

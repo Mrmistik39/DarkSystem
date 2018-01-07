@@ -50,6 +50,7 @@ use pocketmine\event\player\PlayerCommandPostprocessEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerEditBookEvent;
+use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerGameModeChangeEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
@@ -1301,9 +1302,9 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 						$distance = $from->distance($to);
 						
 						if($this->isSprinting()){
-							$this->exhaust(0.1 * $distance, PlayerExhaustEvent::CAUSE_SPRINTING);
+							//$this->exhaust(0.1 * $distance, PlayerExhaustEvent::CAUSE_SPRINT);
 						}else{
-							$this->exhaust(0.01 * $distance, PlayerExhaustEvent::CAUSE_WALKING);
+							//$this->exhaust(0.01 * $distance, PlayerExhaustEvent::CAUSE_WALKING);
 						}
 					}
 				}
@@ -1324,7 +1325,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 
 			$this->setPosition($from);
 			$this->sendPosition($from, $from->yaw, $from->pitch, MovePlayerPacket::MODE_RESET);
-		}else{
+        }else{
 			if($distanceSquared != 0 and $this->nextChunkOrderRun > 20){
 				$this->nextChunkOrderRun = 20;
 			}
@@ -2169,16 +2170,16 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 							}
 							$ev = new EntityRegainHealthEvent($target, $amount, EntityRegainHealthEvent::CAUSE_FEED);
 							$target->heal($ev->getAmount(), $ev);
-							$target->level->addParticle(new HeartParticle($target->x, $target->y + 0.3, $target->z));
+							$target->level->addParticle(new HeartParticle(new Vector3($target->x, $target->y + 0.3, $target->z)));
 							foreach($recipients as $r){
 								$r->sendSound(LevelSoundEventPacket::SOUND_EAT, $position, 63);
 							}
 							if($this->isLiving()){
 								$item->setAmount($item->getAmount() - 1);
 							}
-						}elseif($item->getId() === Item::SHEAR){
+						}elseif($item->getId() === Item::SHEARS){
 							$motion = $this->getDirectionVector()->multiply(0.4);
-							if($target instanceof Sheep || $target instanceof Snowman){
+							if($target instanceof Sheep || $target instanceof SnowGolem){
 								$target->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_SHEARED, true);
 							}
 							if($target instanceof Sheep){
