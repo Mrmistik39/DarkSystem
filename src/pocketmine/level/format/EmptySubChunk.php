@@ -21,59 +21,59 @@ class EmptySubChunk extends SubChunk{
 		return true;
 	}
 
-	public function getBlockId(int $x, int $y, int $z){
+	public function getBlockId($x, $y, $z){
 		return 0;
 	}
 
-	public function setBlockId(int $x, int $y, int $z, int $id){
+	public function setBlockId($x, $y, $z, $id){
 		return false;
 	}
 
-	public function getBlockData(int $x, int $y, int $z){
+	public function getBlockData($x, $y, $z){
 		return 0;
 	}
 
-	public function setBlockData(int $x, int $y, int $z, int $data){
+	public function setBlockData($x, $y, $z, $data){
 		return false;
 	}
 
-	public function getFullBlock(int $x, int $y, int $z){
+	public function getFullBlock($x, $y, $z){
 		return 0;
 	}
 
-	public function setBlock(int $x, int $y, int $z, $id = null, $data = null){
+	public function setBlock($x, $y, $z, $id = null, $data = null){
 		return false;
 	}
 
-	public function getBlockLight(int $x, int $y, int $z){
+	public function getBlockLight($x, $y, $z){
 		return 0;
 	}
 
-	public function setBlockLight(int $x, int $y, int $z, int $level){
+	public function setBlockLight($x, $y, $z, $level){
 		return false;
 	}
 
-	public function getBlockSkyLight(int $x, int $y, int $z){
+	public function getBlockSkyLight($x, $y, $z){
 		return 10;
 	}
 
-	public function setBlockSkyLight(int $x, int $y, int $z, int $level){
+	public function setBlockSkyLight($x, $y, $z, $level){
 		return false;
 	}
 
-	public function getBlockIdColumn(int $x, int $z){
+	public function getBlockIdColumn($x, $z){
 		return "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 	}
 
-	public function getBlockDataColumn(int $x, int $z){
+	public function getBlockDataColumn($x, $z){
 		return "\x00\x00\x00\x00\x00\x00\x00\x00";
 	}
 
-	public function getBlockLightColumn(int $x, int $z){
+	public function getBlockLightColumn($x, $z){
 		return "\x00\x00\x00\x00\x00\x00\x00\x00";
 	}
 
-	public function getSkyLightColumn(int $x, int $z){
+	public function getSkyLightColumn($x, $z){
 		return "\xff\xff\xff\xff\xff\xff\xff\xff";
 	}
 

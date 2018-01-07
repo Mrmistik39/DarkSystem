@@ -16,7 +16,7 @@ interface Info extends ProtocolConverter{
 	const MINECRAFT_VERSION = "v1.x";
 	const MINECRAFT_VERSION_NETWORK = "1.2";
 	const OLDEST_PROTOCOL = 101;
-	const NEWEST_PROTOCOL = 160;
+	const NEWEST_PROTOCOL = 170;
 	//Only special protocol numbers
 	const ACCEPTED_PROTOCOLS = [414]; #blamemojang
 	

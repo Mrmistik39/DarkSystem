@@ -13,13 +13,6 @@ namespace pocketmine\network\protocol;
 
 abstract class PEPacket extends DataPacket{
 	
-	const CLIENT_ID_MAIN_PLAYER = 0;
-	const CLIENT_ID_SERVER = 0;
-	
-	public $senderID = PEPacket::CLIENT_ID_SERVER;
-	
-	public $targetID = PEPacket::CLIENT_ID_MAIN_PLAYER;
-	
 	protected function checkLength($len){
 		if($this->offset + $len > strlen($this->buffer)){
 			throw new \Exception(get_class($this) . ": Try get {$len} bytes, offset = " . $this->offset . ", bufflen = " . strlen($this->buffer) . ", buffer = " . bin2hex(substr($this->buffer, 0, 250)));
@@ -27,21 +20,15 @@ abstract class PEPacket extends DataPacket{
 	}
 	
 	protected function getHeader($playerProtocol = 0){
-		if($playerProtocol >= Info::PROTOCOL_120) {
-			$this->senderID = $this->getByte();
-			$this->targetID = $this->getByte();
-			if($this->senderID > 4 || $this->targetID > 4){
-				throw new \Exception(get_class($this) . ": Packet decode headers error");
-			}
-		}
+		
 	}
 	
 	public function reset($playerProtocol = 0){
 		$this->buffer = chr(PEPacket::$packetsIds[$playerProtocol][$this::PACKET_NAME]);
 		$this->offset = 0;
 		if($playerProtocol >= Info::PROTOCOL_120){
-			$this->putByte($this->senderID);
-			$this->putByte($this->targetID);
+			$this->putByte(0);
+			$this->putByte(0);
 			$this->offset = 2;
 		}
 	}
