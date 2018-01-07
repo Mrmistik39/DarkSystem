@@ -1,24 +1,5 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
 namespace pocketmine\network\protocol;
 
 class DisconnectPacket extends PEPacket{
@@ -38,8 +19,7 @@ class DisconnectPacket extends PEPacket{
 		
 		$this->offset = 0;
 		if($playerProtocol >= Info::PROTOCOL_120){
-			$this->putByte($this->senderSubClientID);
-			$this->putByte($this->targetSubClientID);
+			$this->buffer .= "\x00\x00";
 			$this->offset = 2;
 		}
 	}
@@ -47,7 +27,7 @@ class DisconnectPacket extends PEPacket{
 	public function decode($playerProtocol){
 		$this->getHeader($playerProtocol);
 		$this->hideDisconnectReason = $this->getByte();
-		if($this->hideDisconnectReason == false){
+		if($this->hideDisconnectReason === false){
 			$this->message = $this->getString();
 		}
 	}
@@ -55,7 +35,7 @@ class DisconnectPacket extends PEPacket{
 	public function encode($playerProtocol){
 		$this->reset($playerProtocol);
 		$this->putByte($this->hideDisconnectReason);
-		if($this->hideDisconnectReason == false){
+		if($this->hideDisconnectReason === false){
 			$this->putString($this->message);
 		}
 	}

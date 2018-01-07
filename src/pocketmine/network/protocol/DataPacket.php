@@ -74,8 +74,4 @@ abstract class DataPacket extends BinaryStream{
 		DataPacket::$packetsIds[Info::PROTOCOL_120] = $oClass->getConstants();
 	}
 	
-	abstract public function encode($playerProtocol);
-	
-	abstract public function decode($playerProtocol);
-	
 }

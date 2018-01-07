@@ -37,9 +37,9 @@ interface ProtocolConverter extends ProtocolAPI{
 	const PROTOCOL_139 = 139;
 	const PROTOCOL_140 = 140;
 	const PROTOCOL_141 = 141;
-	/** Undefined Protocols **/
 	const PROTOCOL_150 = 150;
 	const PROTOCOL_160 = 160;
+	/** Undefined Protocols **/
 	const PROTOCOL_170 = 170;
 	/** .__. **/
 	const PROTOCOL_414 = 414; //Who sit on keyboard? #blamemojang

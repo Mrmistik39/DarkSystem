@@ -13,7 +13,7 @@ namespace pocketmine\network\protocol;
 
 interface ProtocolAPI{
 	
-	//For plugin compatibility
+	//For compatibility
 	
 	const CURRENT_PROTOCOL = Info::NEWEST_PROTOCOL;
 	
