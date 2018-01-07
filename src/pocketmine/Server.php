@@ -147,7 +147,7 @@ class Server extends DarkSystem{
 	private $tickAverage = [20, 20, 20, 20, 20];
 	private $useAverage = [20, 20, 20, 20, 20];
 	
-	private $knsol;
+	private $konsol;
 	
 	private $console = null;
 	private $consoleThreaded;
@@ -692,11 +692,11 @@ class Server extends DarkSystem{
 	}
 	
 	public function doesSupportProtocol($protocol){
-		if(!is_numberic($protocol)){
+		if(!is_numeric($protocol)){
 			return false;
 		}
 		
-		if(in_array($protocol, ProtocolInfo::ACCEPTED_PROTOCOLS) || $protocol === ProtocolInfo::OLDEST_PROTOCOL || $protocol === ProtocolInfo::NEWEST_PROTOCOL || ($protocol > OLDEST_PROTOCOL && $protocol < NEWEST_PROTOCOL)){
+		if(in_array($protocol, ProtocolInfo::ACCEPTED_PROTOCOLS) || $protocol === ProtocolInfo::OLDEST_PROTOCOL || $protocol === ProtocolInfo::NEWEST_PROTOCOL || /**($protocol > OLDEST_PROTOCOL && $protocol < NEWEST_PROTOCOL)*/){
 			return true;
 		}
 		
@@ -1996,7 +1996,7 @@ class Server extends DarkSystem{
 						$p->encode($protocol);
 					}
 					$newPackets[$protocol][] = $p->buffer;
-				}elseif($protocolsCount === 1){
+				}elseif($protocolsCount === 1){//ProtocolCount is null
 					$newPackets[$protocol][] = $p;
 				}
 			}
