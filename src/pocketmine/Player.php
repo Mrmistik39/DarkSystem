@@ -1744,7 +1744,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 				parent::__construct($this->level, $nbt);
 				//LOGIN PACKETS
 				$this->server->addOnlinePlayer($this);
-				//Sets the first spawn if have a valid one
+				//Sets the first spawn if has a valid one
 				if(is_null($this->spawnPosition) && isset($this->namedtag->Level) && ($level = $this->server->getLevelByName($this->namedtag["Level"])) instanceof Level){
 					$this->spawnPosition = new Position($this->namedtag["SpawnX"], $this->namedtag["SpawnY"], $this->namedtag["SpawnZ"], $level);
 				}
