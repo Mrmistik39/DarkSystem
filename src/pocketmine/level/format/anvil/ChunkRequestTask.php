@@ -66,7 +66,7 @@ class ChunkRequestTask extends AsyncTask{
 		    $extraData->getBuffer() .
 		$this->tiles;
 
-		$this->setResult($ordered, false);
+		$this->setResult($ordered);
 	}
 
 	public function onCompletion(Server $server){
