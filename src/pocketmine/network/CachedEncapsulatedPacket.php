@@ -13,7 +13,7 @@ namespace pocketmine\network;
 
 use pocketmine\network\raknet\protocol\EncapsulatedPacket;
 
-class CachedEncapsulatedPacket extends EncapsulatedPacket {
+class CachedEncapsulatedPacket extends EncapsulatedPacket{
 
 	private $internalData = null;
 

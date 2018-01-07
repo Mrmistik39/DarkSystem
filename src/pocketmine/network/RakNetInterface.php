@@ -229,8 +229,8 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
 				$this->server->batchPackets([$player], [$packet]);
 				return null;
 			}
-			$identifier = $this->identifiers[$player];	
-			$pk = new EncapsulatedPacket();				
+			$identifier = $this->identifiers[$player];
+			$pk = new EncapsulatedPacket();
 			$pk->buffer = chr(0xfe) . $this->getPacketBuffer($packet, $protocol);
 			$pk->reliability = 3;
 			if($immediate){
