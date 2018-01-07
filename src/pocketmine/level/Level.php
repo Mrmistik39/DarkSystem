@@ -1354,7 +1354,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 			$entities = $this->getCollidingEntities($hand->getBoundingBox());
 			$realCount = 0;
 			foreach($entities as $e){
-				if($e instanceof Arrow || $e instanceof DroppedItem){
+				if($e instanceof \pocketmine\entity\projectile\Arrow || $e instanceof DroppedItem){
 					continue;
 				}
 				if($e instanceof Player && $e->isSpectator()){
@@ -1772,7 +1772,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	 * @param int $x
 	 * @param int $y
 	 * @param int $z
-	 * @param Player $p
+	 * @param Player $player
 	 */
 	public function sendLighting($x, $y, $z, Player $player){
 		$pk = new AddEntityPacket();
@@ -2131,12 +2131,11 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 		return true;
 	}
 
-	/**
-	 * @param int $X
-	 * @param int $Z
-	 *
-	 * @return bool
-	 */
+    /**
+     * @param $x
+     * @param $z
+     * @return bool
+     */
 	public function isSpawnChunk($x, $z){
 		$spawnX = $this->provider->getSpawn()->getX() >> 4;
 		$spawnZ = $this->provider->getSpawn()->getZ() >> 4;
