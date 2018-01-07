@@ -1052,9 +1052,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		$pk->y = $this->spawnPosition->y;
 		$pk->z = $this->spawnPosition->z;
 		$this->dataPacket($pk);
-		//$this->x = $this->spawnPosition->x;
-		//$this->y = $this->spawnPosition->y;
-		//$this->z = $this->spawnPosition->z;
 	}
 
 	public function stopSleep(){
