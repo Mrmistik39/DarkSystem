@@ -696,7 +696,7 @@ class Server extends DarkSystem{
 			return false;
 		}
 		
-		if(in_array($protocol, ProtocolInfo::ACCEPTED_PROTOCOLS) || $protocol === ProtocolInfo::OLDEST_PROTOCOL || $protocol === ProtocolInfo::NEWEST_PROTOCOL || /**($protocol > OLDEST_PROTOCOL && $protocol < NEWEST_PROTOCOL)*/){
+		if(in_array($protocol, ProtocolInfo::ACCEPTED_PROTOCOLS) || $protocol === ProtocolInfo::OLDEST_PROTOCOL || $protocol === ProtocolInfo::NEWEST_PROTOCOL /**|| ($protocol > OLDEST_PROTOCOL && $protocol < NEWEST_PROTOCOL)*/){
 			return true;
 		}
 		
