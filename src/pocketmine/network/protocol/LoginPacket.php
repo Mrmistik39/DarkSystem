@@ -61,7 +61,7 @@ class LoginPacket extends PEPacket{
 		if($this->protocol1 > Info::NEWEST_PROTOCOL){
 			$this->protocol1 = Info::CURRENT_PROTOCOL;
 		}
-		if(!in_array($this->protocol1, $acceptedProtocols) && $this->protocol1 < Info::OLDEST_PROTOCOL){
+		if(!in_array($this->protocol1, $acceptedProtocols) && $this->protocol1 < Info::OLDEST_PROTOCOL && $this->protocol1 < Info::NEWEST_PROTOCOL){
 			$this->isValidProtocol = false;
 			return;
 		}
