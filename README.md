@@ -20,10 +20,10 @@ You can download it [here](http://bit.do/darksystem_apk).<br>
 You can test DarkSystem before download.<br>
 IP: **dts.kro.kr**<br>
 PORT: **19130**<br>
+STATUS: **Unknown**<br>
 
 # Features:
 - [x] DarkSystem is **# 1** about speed & no-lag.
-  * We think so
 - [x] Based on **old** PocketMine-MP for best performance and stability.
 - [x] Loads chunks region-to-region.
   * It uses less CPU resources & loads chunks fast.
@@ -36,11 +36,9 @@ PORT: **19130**<br>
   * Players don't glitch or clip through the floor (if they are not in 1.2) while moving.
   * Does not throw players back.
 - [x] MCPE 1.2 Support
-  * DarkSystem is compatible with MC: Bedrock Edition/Better together update (aka 1.2).
-- [ ] Auto Updater
-  * DarkSystem is automatically updated from GitHub.
+  * DarkSystem is compatible with MC: Bedrock Edition/Better together update (1.2).
 - [x] More Biomes & Advanced Generator
-  * DarkSystem supports more biomes than others softwares.
+  * DarkSystem supports too many biomes.
   * DarkSystem loads levels fast.
 - [x] Advanced RakNet
 - [x] Themes!
@@ -53,8 +51,8 @@ PORT: **19130**<br>
   * **May cause lag when moving.**
 - [x] No Bad Packets!
   * Players only can send a few packets before logging in.
-  * Only LoginPacket, Resource and Behavior packs packets, and 1-2 required packets can be sent.
-  * Blocks AdventureSettingsPacket and SetPlayerGameType packet.
+  * Only LoginPacket, Resource and Behavior packs packets, and a few required packets can be sent.
+  * Blocks AdventureSettingsPacket and SetPlayerGameTypePacket.
 - [x] **InventoryAPI!**
   * You can create customizable virtual inventories!
   * *For developers* **InventoryAPI::createInventory(...)**
@@ -74,19 +72,15 @@ PORT: **19130**<br>
   * /operator
     * Instead of /op 
     * You easily can enable/disable this command from **pocketmine_advanced.yml**.
-  * More commands:
+  * Other commands:
     * /clear
     * /tpall
     * /clearchat
     * /cave
     * /summon
     * /chunkinfo
-- [x] Custom 1.2 and WIN10 Inventories
-- [x] More Mobs/Entities 
-   * Parrot,
-   * NPC,
-   * Chalkboard,
-   * Learn To Code Mascot.
+- [x] Advanced 1.2 and WIN10 Inventories
+- [x] More Mobs/Entities
 - [x] Extended Plugin API (It is an api called as DarkAPI :D lol)
   * Support Compound & CompoundTag etc.
 - [x] Compatible with newest plugins
@@ -98,9 +92,9 @@ PORT: **19130**<br>
   * You can send data to website of your server about players' kills, deaths, money etc. quickly.
   * *For developers* **utils\MySQLManager**
 - [x] Colored & Clean Console
-  * Console is really clean, does not send junk messages like:
+  * Console is clean and does not send junk messages like:
     * plugin enabling,
-    * XBOX offline mode warn,
+    * XBOX offline mode warning,
     * etc.
 - [x] AntiForceOP
   * Hackers cannot access to OP command, you are safe :)
@@ -119,35 +113,23 @@ PORT: **19130**<br>
   * An advanced rcon client for managing DarkSystem servers.
   * Fully protected with password.
   * 100% safe.
-  * Works on Android, Windows And more...
-- [x] Fully Turkish Language
-  * DarkSystem Supports 79% Turkish Language.
-  * How to set language to Turkish?
-    * Simple, choose language to **tur** on set-up wizard.
-    * After set **language:** to **tur** on **pocketmine.yml**)
-- [ ] Greek language coming soon
-    * progress 10%
-- [x] MultiVersion® support: **What is this?**
-  * We support:
+  * Works on Android, Windows and more...
+- [x] MultiVersion support: **What is this?**
+  * DarkSystem supports:
     * **1.0.x**
     * **1.1.x**
     * **1.2.x**
 - [x] Always up-to-date.
-  * We always add new blocks and items to DarkSystem.
-  * You can always find new things here when they are out!
+  * We always add new blocks, items and entities to DarkSystem.
+  * You can always find new things here when they out!
 - [x] No junk tasks/threads on background. Anything cannot occupy the CPU resources and performance.
 - [x] TextUtils
   * Idea from MiNET
   * Code taken from Turanic.
   * Allows to create more beautiful texts.
   * *For developers* Example: **TextUtils::center($message)** ---> makes the message in center.
-- [x] Code is clean, FAST and SAFE, coded in PHP.
+- [x] Code is clean, fast, safe and coded in PHP.
 - [x] Advanced Config **(pocketmine_advanced.yml)**
-- [x] DarkBot (Uncontinued)
-  * Virtual Intelligent Bot;
-    * It can talk,
-    * move,
-    * etc.
 - Other features:
  * [ ] Piston (indev)
  * [x] Banner (1.2 only)
@@ -158,10 +140,10 @@ PORT: **19130**<br>
  * [ ] Armor Stand (1.2 only) (indev) (works as tile, we will make it as entity) (progress 10%)
  * [x] Writable & Written Books (1.2 only)
  * [x] Jukebox & Music Discs (1.2 only)
- * [ ] Working Command Block (indev) (progress 40%) 
+ * [ ] Working Command Block (indev) (progress 80%) 
 
 # TODO List:
-- Checked item boxes mean we are working on them **OR** they are in-dev, empty mean that will we work soon on them!
+- Checked item boxes mean we are working on them or they are in-dev, empty mean that will we work soon on them!
 - [x] **Command Block (indev)**
 - [ ] **Experience System (working)**
 - [ ] **Map**
@@ -182,23 +164,18 @@ PORT: **19130**<br>
 - [x] **Auto lag cleaner**
 
 # Known Bugs:
-- Respawn & Movement bug on 1.2
-- DarkSystem's experience system does not work correctly. (Well its not a HUGE problem :D)
+- Respawn and Movement bug on 1.2
+- DarkSystem's experience system does not work correctly.
 
 # Known Bugs in 1.2:
-- Moving is glitchy. (Seen on Android OS & 32-bit machines)
+- Moving is glitchy. (Seen on 32-bit server machines)
 - AvailableCommandsPacket issues
 
 # Notes:
 - DarkSystem does not support PMAnvil map format, it only supports Anvil and McRegion.
-- DarkSystem's language is currently Turkish, but you can change it in pocketmine.yml (Supports 20+ Languages)
-- Some strings, messages and lines may be in Turkish, we are adding translation to them on every update.
-- DarkSystem is 68% stable now.It will be 90%+ in future
+- DarkSystem is not stable.
 - /op command is renamed to /operator and you easily can enable/disable this command from **pocketmine_advanced.yml**.
 - Mob spawners are not supported yet. Sorry for this, they will be added soon...
-
-# Test Server
-- **COMING SOON**
 
 # Get DarkSystem:
 - Download the latest build from [Jenkins](http://jenkins.haniokasai.com/job/DarkSystem-PMMP_12).
