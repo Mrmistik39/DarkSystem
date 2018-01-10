@@ -153,7 +153,7 @@ class Network{
 		return $this->interfaces;
 	}
 
-	public function setCount($count, $maxcount = 31360){
+	public function setCount($count, $maxcount){
 		$this->server->mainInterface->setCount($count, $maxcount);
 	}
 
@@ -171,7 +171,7 @@ class Network{
 
 				$interface->emergencyShutdown();
 				$this->unregisterInterface($interface);
-				$konsol->critical("Network Hatası: ".$e->getMessage());
+				$konsol->critical("Network Error: " . $e->getMessage());
 			}
 		}
 	}
@@ -200,7 +200,7 @@ class Network{
 	 * @param string $name
 	 */
 	public function setName($name){
-		$this->name = (string)$name;
+		$this->name = (string) $name;
 		foreach($this->interfaces as $interface){
 			$interface->setName($this->name);
 		}

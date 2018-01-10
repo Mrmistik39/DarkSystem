@@ -19,8 +19,8 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\MainLogger;
 use pocketmine\utils\TextFormat;
-use pocketmine\network\raknet\protocol\EncapsulatedPacket;
 use pocketmine\network\raknet\RakNet;
+use pocketmine\network\raknet\protocol\EncapsulatedPacket;
 use pocketmine\network\raknet\server\RakNetServer;
 use pocketmine\network\raknet\server\ServerHandler;
 use pocketmine\network\raknet\server\ServerInstance;
@@ -122,7 +122,7 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
 		}
 	}
 
-	public function close(Player $player, $reason = "Bilinmeyen Neden"){
+	public function close(Player $player, $reason = "Unknown Reason"){
 		if(isset($this->identifiers[$player])){
 			unset($this->players[$this->identifiers[$player]]);
 			unset($this->identifiersACK[$this->identifiers[$player]]);
@@ -218,25 +218,20 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
     /**
      * @param Player $player
      * @param DataPacket $packet
-     * @param bool $immediate
      * @return null
      */
-	public function putPacket(Player $player, DataPacket $packet, $immediate = false){
-		if(isset($this->identifiers[$player])){			
-			$protocol = $player->getPlayerProtocol();							
-			$packet->encode($protocol);
-			if(!$packet instanceof BatchPacket && strlen($packet->buffer) >= Network::$BATCH_THRESHOLD){
+	public function putPacket(Player $player, DataPacket $packet){
+		if(isset($this->identifiers[$player])){
+			$packet->encode($player->getPlayerProtocol());
+			if(!$packet instanceof BatchPacket){
 				$this->server->batchPackets([$player], [$packet]);
 				return null;
 			}
 			$identifier = $this->identifiers[$player];
 			$pk = new EncapsulatedPacket();
-			$pk->buffer = chr(0xfe) . $this->getPacketBuffer($packet, $protocol);
-			$pk->reliability = 3;
-			if($immediate){
-				$pk->reliability = 0;
-			}
-			$this->interface->sendEncapsulated($identifier, $pk, (!($packet instanceof BatchPacket) ? RakNet::FLAG_NEED_ZLIB : 0) | ($immediate === true ? RakNet::PRIORITY_IMMEDIATE : RakNet::PRIORITY_NORMAL));
+			$pk->buffer = chr(0xfe) . $packet->buffer;
+			$pk->reliability = 0; //0 = direct, 3 = normal
+			$this->interface->sendEncapsulated($identifier, $pk, RakNet::PRIORITY_IMMEDIATE);
 		}
 		return null;
 	}
@@ -247,9 +242,8 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
      * @return null|DataPacket
      */
 	private function getPacket($buffer, Player $player){
-		$playerProtocol = $player->getPlayerProtocol();
 		$pid = ord($buffer{0});
-		if(($data = $this->network->getPacket($pid, $playerProtocol)) === null){
+		if(($data = $this->network->getPacket($pid, $player->getPlayerProtocol())) === null){
 			return null;
 		}
 		$offset = 1;
@@ -268,19 +262,6 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
 			$pk->reliability = 3;
 			$this->interface->sendEncapsulated($player->getIdentifier(), $pk, RakNet::PRIORITY_NORMAL);
 		}
-	}
-	
-	private function getPacketBuffer($packet, $protocol){
-		if($protocol < ProtocolInfo::PROTOCOL_110 || ($packet instanceof BatchPacket)){
-			return $packet->buffer;
-		}
-		return $this->fakeZlib(Binary::writeVarInt(strlen($packet->buffer)) . $packet->buffer);
-	}
-	
-	private function fakeZlib($buffer){
-		static $startBytes = "\x78\x01\x01";
-		$len = strlen($buffer);
-		return $startBytes . Binary::writeLShort($len) . Binary::writeLShort($len ^ 0xffff) . $buffer . hex2bin(hash('adler32', $buffer, false));
 	}
 	
 	private function isZlib($buffer){

@@ -63,7 +63,6 @@ use pocketmine\network\protocol\Info as ProtocolInfo;
 use pocketmine\network\protocol\BatchPacket;
 use pocketmine\network\protocol\CraftingDataPacket;
 use pocketmine\network\protocol\DataPacket;
-use pocketmine\network\protocol\Info;
 use pocketmine\network\protocol\PlayerListPacket;
 use pocketmine\network\query\QueryHandler;
 use pocketmine\network\RakNetInterface;
@@ -697,7 +696,7 @@ class Server extends DarkSystem{
 			return false;
 		}
 		
-		if(in_array($protocol, ProtocolInfo::ACCEPTED_PROTOCOLS) || $protocol === ProtocolInfo::OLDEST_PROTOCOL || $protocol === ProtocolInfo::NEWEST_PROTOCOL || ($protocol > Info::OLDEST_PROTOCOL && $protocol < Info::NEWEST_PROTOCOL)){
+		if(in_array($protocol, ProtocolInfo::ACCEPTED_PROTOCOLS) || $protocol === ProtocolInfo::OLDEST_PROTOCOL || $protocol === ProtocolInfo::NEWEST_PROTOCOL || ($protocol > ProtocolInfo::OLDEST_PROTOCOL && $protocol < ProtocolInfo::NEWEST_PROTOCOL)){
 			return true;
 		}
 		
@@ -1982,28 +1981,56 @@ class Server extends DarkSystem{
 		}
 	}
 	
-	public function batchPackets($players, $packets){
+	public function batchPackets(array $players, array $packets){
 		$targets = [];
 		$neededProtocol = [];
-		$newPackets = [];
-		foreach($players as $p){
-			$targets[] = array($p->getIdentifier(), $p->getPlayerProtocol());
-			$neededProtocol[$p->getPlayerProtocol()] = $p->getPlayerProtocol();
+		foreach ($players as $p) {
+			$protocol = $p->getPlayerProtocol();
+			$playerIdentifier = $p->getIdentifier();
+			$targets[$playerIdentifier] = [$playerIdentifier, $protocol];
+			$neededProtocol[$protocol] = $protocol;
 		}
-		foreach($packets as $p){
-			foreach($neededProtocol as $protocol){
-				if($p instanceof DataPacket){
-					if(!$p->isEncoded || count($neededProtocol) > 1){
+		$protocolsCount = count($neededProtocol);
+		$newPackets = [];
+		foreach ($packets as $p) {
+			foreach ($neededProtocol as $protocol) {
+				if ($p instanceof DataPacket) {
+					if ($protocol >= ProtocolInfo::PROTOCOL_120) {
 						$p->encode($protocol);
+						$newPackets[$protocol][] = $p->buffer;
+					} else {
+						if (!$p->isEncoded || $protocolsCount > 1) {
+							$p->encode($protocol);
+						}
+						$newPackets[$protocol][] = $p->buffer;
 					}
-					$newPackets[$protocol][] = $p->buffer;
-				}elseif($protocolsCount === 1){//ProtocolCount is null
+				} elseif ($protocolsCount == 1) {
 					$newPackets[$protocol][] = $p;
 				}
 			}
 		}
 		$data = [];
-		$data["packets"] = $newPackets;
+		$data['packets'] = $newPackets;
+		$data['targets'] = $targets;
+		$data['networkCompressionLevel'] = $this->networkCompressionLevel;
+		$data['isBatch'] = true;
+		$this->packetMgr->pushMainToThreadPacket(serialize($data));
+	}
+	
+	public function batchackets(array $targets, array $packets){
+		foreach($packets as $p){
+			foreach($targets as $player){
+				if($p instanceof DataPacket){
+					if(($protocol = $player->getPlayerProtocol()) >= ProtocolInfo::PROTOCOL_120){
+						$p->encode($protocol);
+					}elseif(!$p->isEncoded){
+						$p->encode($protocol);
+					}
+				}
+			}
+		}
+		$data = [];
+		$data["packets"] = $packets;
 		$data["targets"] = $targets;
 		$data["networkCompressionLevel"] = $this->networkCompressionLevel;
 		$data["isBatch"] = true;
@@ -2045,7 +2072,7 @@ class Server extends DarkSystem{
 	
 	public function dispatchCommand(CommandSender $sender, $commandLine){
 		if(!$sender instanceof CommandSender){
-			throw new ServerException("CommandSender Geçerli Değil!");
+			throw new ServerException("CommandSender is not valid");
 		}
 		if($this->cmdMap->dispatch($sender, $commandLine)){
 			return true;
@@ -2094,8 +2121,10 @@ class Server extends DarkSystem{
 
 		$this->pluginMgr->registerInterface(PharPluginLoader::class);
 		$this->pluginMgr->loadPlugins($this->pluginPath);
+		
 		$this->enablePlugins(PluginLoadOrder::STARTUP);
 		$this->enablePlugins(PluginLoadOrder::POSTWORLD);
+		
 		TimingsHandler::reload();
 	}
 	
@@ -2117,7 +2146,7 @@ class Server extends DarkSystem{
 		try{
 			$this->hasStopped = true;
 			foreach($this->players as $p){
-				$p->close($this->getProperty("settings.shutdown-message", "Sunucu Durduruldu"));
+				$p->close($this->getProperty("settings.shutdown-message", "Server closed"));
 			}
 			
 			foreach($this->network->getInterfaces() as $int){
@@ -2414,7 +2443,6 @@ class Server extends DarkSystem{
 	
 	private function tick(){
 		$tickTime = microtime(true);
-		//if(($tickTime - $this->nextTick) < -0.025){
 		if($tickTime < $this->nextTick){
 			return false;
 		}

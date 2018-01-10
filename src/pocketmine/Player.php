@@ -992,7 +992,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		return true;
 	}
 	
-	public function dataPacket(DataPacket $packet, $direct = false){
+	public function dataPacket(DataPacket $packet){
 		if(!$this->connected){
 			return;
 		}
@@ -1006,12 +1006,8 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		if($ev->isCancelled()){
 			return;
 		}
-		$this->interface->putPacket($this, $packet, $direct);
+		$this->interface->putPacket($this, $packet);
 		return;
-	}
-	
-	public function directDataPacket(DataPacket $packet){
-		$this->dataPacket($packet, true);
 	}
 	
 	public function sleepOn(Vector3 $pos){
@@ -2995,7 +2991,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		if($this->connected && !$this->closed){
 			$pk = new DisconnectPacket();
 			$pk->message = $reason;
-			$this->directDataPacket($pk);
+			$this->dataPacket($pk);
 			$this->connected = false;
 			if($this->username !== ""){
 				$this->server->getPluginManager()->callEvent($ev = new PlayerQuitEvent($this, $this->getLeaveMessage(), $reason));
@@ -3887,7 +3883,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		$pk->y = $this->y;
 		$pk->z = $this->z;
 		$pk->entityType = $noteId;
-		$this->directDataPacket($pk);
+		$this->dataPacket($pk);
 	}
 		
 	public function canSeeEntity(Entity $entity){
