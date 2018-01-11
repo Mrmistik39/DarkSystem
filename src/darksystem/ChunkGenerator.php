@@ -164,7 +164,6 @@ class ChunkGenerator extends Thread{
 		$result["chunkX"] = $data["chunkX"];
 		$result["chunkZ"] = $data["chunkZ"];
 		$protocols = isset($data["protocols"]) ? $data["protocols"] : ChunkGenerator::SUPPORTED_PROTOCOLS;
-		$subClientsId = isset($data["subClientsId"]) ? $data["subClientsId"] : [0];
 		foreach($protocols as $protocol){
 			$pk = new FullChunkDataPacket();
 			$pk->chunkX = $data["chunkX"];
@@ -172,14 +171,11 @@ class ChunkGenerator extends Thread{
 			$pk->order = FullChunkDataPacket::ORDER_COLUMNS;
 			if($protocol >= ProtocolInfo::PROTOCOL_120){
 				$pk->data = $chunkData120;
-				foreach($subClientsId as $subClientId){
-					$pk->senderSubClientID = $subClientId;
-					$pk->encode($protocol);
-					if(!empty($pk->buffer)){
-						$str = Binary::writeVarInt(strlen($pk->buffer)) . $pk->buffer;
-						$ordered = zlib_encode($str, ZLIB_ENCODING_DEFLATE, 7);
-						$result[$protocol . ":{$subClientId}"] = $ordered;
-					}
+				$pk->encode($protocol);
+				if(!empty($pk->buffer)){
+					$str = Binary::writeVarInt(strlen($pk->buffer)) . $pk->buffer;
+					$ordered = zlib_encode($str, ZLIB_ENCODING_DEFLATE, 7);
+					$result[$protocol] = $ordered;
 				}
 			}else{
 				$pk->data = $chunkData;
@@ -187,7 +183,7 @@ class ChunkGenerator extends Thread{
 				if(!empty($pk->buffer)){
 					$str = Binary::writeVarInt(strlen($pk->buffer)) . $pk->buffer;
 					$ordered = zlib_encode($str, ZLIB_ENCODING_DEFLATE, 7);
-					$result[$protocol . ":0"] = $ordered;
+					$result[$protocol] = $ordered;
 				}
 			}
 		}
