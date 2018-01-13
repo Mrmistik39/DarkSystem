@@ -57,7 +57,7 @@ class Anvil extends McRegion{
 	
 	public function requestChunkTask($x, $z, $protocols, $subClientsId){
 		$chunk = $this->getChunk($x, $z, false);
-		if(!($chunk instanceof $this->chunkClass)){
+		if(!$chunk instanceof Chunk){
 			throw new ChunkException("Invalid Chunk sent");
 		}
 		

@@ -99,7 +99,7 @@ class McRegion extends BaseLevelProvider{
 	
 	public function requestChunkTask($x, $z, $protocols, $subClientsId){
 		$chunk = $this->getChunk($x, $z, false);
-		if(!($chunk instanceof Chunk)){
+		if(!$chunk instanceof Chunk){
 			throw new ChunkException("Invalid Chunk sent");
 		}
 		
