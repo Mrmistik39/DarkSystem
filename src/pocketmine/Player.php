@@ -2581,7 +2581,6 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 						$this->dataPacket($pk);
 						break;
 					case ResourcePackClientResponsePacket::STATUS_COMPLETED:
-						#:/
 						break;
 						default;
 						break;
@@ -3049,7 +3048,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 				TF::AQUA . $this->getName() . TF::WHITE,
 				$this->ip,
 				$this->port,
-				str_replace(["\n", "\r"], [" ", ""], $this->server->getLanguage()->translateString($reason))
+				$this->server->getLanguage()->translateString($reason)
 			]));
 			
 			$this->usedChunks = [];

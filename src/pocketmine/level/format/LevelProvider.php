@@ -43,10 +43,12 @@ interface LevelProvider{
 	/**
 	 * @param int $x
 	 * @param int $z
+	 * @param array $protocols
+	 * @param int $subClientId
 	 *
 	 * @return \pocketmine\scheduler\AsyncTask|null
 	 */
-	public function requestChunkTask($x, $z);
+	public function requestChunkTask($x, $z, $protocols, $subClientId);
 
 	/** @return string */
 	public function getPath();

@@ -460,8 +460,8 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	/**
 	 * @param bool $value
 	 */
-	public function setAutoSave($value){
-		$this->autoSave = $value;
+	public function setAutoSave($value = true){
+		$this->autoSave = (bool) $value;
 	}
 
 	/**
@@ -1916,6 +1916,8 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 
 	protected function processChunkRequest(){
 		if(count($this->chunkSendQueue) > 0){
+			$protocols = [];
+			$subClientsId = []; //So many tries to remove this...
 			$x = null;
 			$z = null;
 			foreach($this->chunkSendQueue as $index => $players){
@@ -1923,35 +1925,54 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 					continue;
 				}
 				Level::getXZ($index, $x, $z);
-				if(advanced_cache === true and ($cache = Cache::get("world:" . $this->getId() . ":" . $index)) !== false){
-					/** @var Player[] $players */
-					foreach($players as $player){
-						if($player->isConnected() and isset($player->usedChunks[$index])){
-							$player->sendChunk($x, $z, $cache);
+				/** @var Player[] $players */
+				foreach($players as $player){
+					if($player->isConnected() && isset($player->usedChunks[$index])){
+						$protocol = $player->getPlayerProtocol();
+						$subClientId = 0;
+						if(advanced_cache === true){
+							$playerIndex = "{$protocol}:{$subClientId}";
+							$cache = Cache::get("world:" . $this->getId() . ":{$index}");
+							if($cache !== false && isset($cache[$playerIndex])){
+								$player->sendChunk($x, $z, $cache[$playerIndex]);
+								continue;
+							}
 						}
+						$protocols[$protocol] = $protocol;
+						$subClientsId[$subClientId] = $subClientId;
 					}
-					unset($this->chunkSendQueue[$index]);
-				}else{
+				}
+				if($protocols !== []){
 					$this->chunkSendTasks[$index] = true;
-					$task = $this->provider->requestChunkTask($x, $z);
+					$task = $this->provider->requestChunkTask($x, $z, $protocols, $subClientsId); //Hmm...
 					if($task instanceof AsyncTask){
 						$this->server->getScheduler()->scheduleAsyncTask($task);
 					}
+				}else{
+					unset($this->chunkSendQueue[$index]);
 				}
 			}
 		}
 	}
 
 	public function chunkRequestCallback($x, $z, $payload){
-		$index = Level::chunkHash($x, $z);
+		if($this->closed){
+			return;
+		} 
+		$index = self::chunkHash($x, $z);
 		if(isset($this->chunkSendTasks[$index])){
 			if(advanced_cache === true){
-				Cache::add("world:" . $this->getId() . ":" . $index, $payload, 60);
+				$cacheId = "world:" . $this->getId() . ":{$index}";
+				if(($cache = Cache::get($cacheId)) !== false){
+					$payload = array_merge($cache, $payload);
+				}
+				Cache::add($cacheId, $payload, 60);
 			}
 			foreach($this->chunkSendQueue[$index] as $player){
 				/** @var Player $player */
-				if($player->isConnected() and isset($player->usedChunks[$index])){
-					$player->sendChunk($x, $z, $payload);
+				$playerIndex = $player->getPlayerProtocol() . ":0";
+				if($player->isConnected() && isset($player->usedChunks[$index]) && isset($payload[$playerIndex])){
+					$player->sendChunk($x, $z, $payload[$playerIndex]);
 				}
 			}
 			unset($this->chunkSendQueue[$index]);

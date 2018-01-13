@@ -97,7 +97,7 @@ class McRegion extends BaseLevelProvider{
 		$z = $chunkZ >> 5;
 	}	
 	
-	public function requestChunkTask($x, $z){	
+	public function requestChunkTask($x, $z, $protocols, $subClientsId){
 		$chunk = $this->getChunk($x, $z, false);
 		if(!($chunk instanceof Chunk)){
 			throw new ChunkException("Invalid Chunk sent");
@@ -112,9 +112,11 @@ class McRegion extends BaseLevelProvider{
 			}
 		}
 		
-		$data = array();
+		$data = [];
 		$data['chunkX'] = $x;
 		$data['chunkZ'] = $z;
+		$data['protocols'] = $protocols;
+		$data['subClientsId'] = $subClientsId;
 		$data['tiles'] = $tiles;
 		$data['blocks'] = $chunk->getBlockIdArray();
 		$data['data'] = $chunk->getBlockDataArray();
@@ -124,6 +126,7 @@ class McRegion extends BaseLevelProvider{
 		$data['biomeColor'] = $this->convertBiomeColors($chunk->getBiomeColorArray());
 		
 		$this->getLevel()->chunkGenerator->pushMainToThreadPacket(serialize($data));
+		
 		return null;
 	}
 	

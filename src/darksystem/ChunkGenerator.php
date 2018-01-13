@@ -24,7 +24,7 @@ class ChunkGenerator extends Thread{
 	protected $externalQueue;
 	protected $internalQueue;
 	
-	const SUPPORTED_PROTOCOLS = [ProtocolInfo::PROTOCOL_105, ProtocolInfo::PROTOCOL_110, ProtocolInfo::PROTOCOL_120];
+	const SUPPORTED_PROTOCOLS = [ProtocolInfo::OLDEST_PROTOCOL, ProtocolInfo::PROTOCOL_105, ProtocolInfo::PROTOCOL_110, ProtocolInfo::PROTOCOL_120];
 	
 	public function __construct(\ClassLoader $loader = null){
 		$this->externalQueue = new \Threaded;
@@ -97,7 +97,7 @@ class ChunkGenerator extends Thread{
 			foreach($data["chunk"]["sections"] as $y => $sections){
 				$chunkData .= chr(0);
 				$chunkData120 .= chr(0);
-				if($sections["empty"] == true){
+				if($sections["empty"] === true){
 					$chunkData .= str_repeat("\x00", 10240);
 					$chunkData120 .= str_repeat("\x00", 6144);
 				}else{
@@ -108,8 +108,6 @@ class ChunkGenerator extends Thread{
 						$blockData = $this->sortData($sections["blocks"]) . $this->sortHalfData($sections["data"]);
 						$lightData = $this->sortHalfData($sections["skyLight"]) . $this->sortHalfData($sections["blockLight"]);
 					}
-					//$blockData = $this->sortData($sections["blocks"]) . $this->sortHalfData($sections["data"]);
-					//$lightData = $this->sortHalfData($sections["skyLight"]) . $this->sortHalfData($sections["blockLight"]);
 					$chunkData .= $blockData . $lightData;
 					$chunkData120 .= $blockData;
 				}
@@ -175,7 +173,7 @@ class ChunkGenerator extends Thread{
 				if(!empty($pk->buffer)){
 					$str = Binary::writeVarInt(strlen($pk->buffer)) . $pk->buffer;
 					$ordered = zlib_encode($str, ZLIB_ENCODING_DEFLATE, 7);
-					$result[$protocol] = $ordered;
+					$result[$protocol . ":0"] = $ordered;
 				}
 			}else{
 				$pk->data = $chunkData;
@@ -183,7 +181,7 @@ class ChunkGenerator extends Thread{
 				if(!empty($pk->buffer)){
 					$str = Binary::writeVarInt(strlen($pk->buffer)) . $pk->buffer;
 					$ordered = zlib_encode($str, ZLIB_ENCODING_DEFLATE, 7);
-					$result[$protocol] = $ordered;
+					$result[$protocol . ":0"] = $ordered;
 				}
 			}
 		}

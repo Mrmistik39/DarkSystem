@@ -229,7 +229,12 @@ class RakNetInterface implements ServerInstance, AdvancedSourceInterface{
 			}
 			$identifier = $this->identifiers[$player];
 			$pk = new EncapsulatedPacket();
-			$pk->buffer = chr(0xfe) . $packet->buffer;
+			//var_dump($packet->buffer);
+			//$str = "";
+			//$str .= Binary::writeVarInt(strlen($packet->buffer)) . $packet->buffer;
+			//$pk->buffer = zlib_encode($str, ZLIB_ENCODING_DEFLATE, 7);
+			//$pk->buffer = $player->getServer()->packetMgr->makeBuffer($identifier, $packet, false, false);
+			$pk->buffer = $packet->buffer;
 			$pk->reliability = 0; //0 = direct, 3 = normal
 			$this->interface->sendEncapsulated($identifier, $pk, RakNet::PRIORITY_IMMEDIATE);
 		}

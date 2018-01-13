@@ -72,7 +72,7 @@ class PacketManager extends Thread{
 	}
 
 	protected function tickProcessor(){
-		while (!$this->shutdown){			
+		while(!$this->shutdown){			
 			$start = microtime(true);
 			$this->tick();
 			$time = microtime(true) - $start;
@@ -142,7 +142,6 @@ class PacketManager extends Thread{
 					$packetsStr[$protocol] .= Binary::writeVarInt(strlen($p)) . $p;
 				}
 			}
-			
 			$packs = [];
 			foreach($packetsStr as $protocol => $str){
 				$buffer = zlib_encode($str, ZLIB_ENCODING_DEFLATE, $data["networkCompressionLevel"]);
@@ -152,7 +151,6 @@ class PacketManager extends Thread{
 				$pk->isEncoded = true;
 				$packs[$protocol] = $pk;
 			}
-			
 			foreach($data["targets"] as $target){
 				if(isset($packs[$target[1]])){
 					$this->externalQueue[] = $this->makeBuffer($target[0], $packs[$target[1]], false, false);
