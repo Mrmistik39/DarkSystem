@@ -2435,7 +2435,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 		if(empty($players)){
 			return;
 		}
-		$index = self::chunkHash($x, $z);
+		$index = Level::chunkHash($x, $z);
 		$this->chunkSendTasks[$index] = true;		
 		$this->chunkSendQueue[$index] = [];
 		$protocols = [];
