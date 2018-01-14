@@ -165,8 +165,8 @@ class ChunkGenerator extends Thread{
 		$subClientsId = isset($data["subClientsId"]) ? $data["subClientsId"] : [0];
 		foreach($protocols as $protocol){
 			$pk = new FullChunkDataPacket();
-			$pk->chunkX = $data['chunkX'];
-			$pk->chunkZ = $data['chunkZ'];
+			$pk->chunkX = $data["chunkX"];
+			$pk->chunkZ = $data["chunkZ"];
 			$pk->order = FullChunkDataPacket::ORDER_COLUMNS;
 			if($protocol >= ProtocolInfo::PROTOCOL_120){
 				$pk->data = $chunkData120;
