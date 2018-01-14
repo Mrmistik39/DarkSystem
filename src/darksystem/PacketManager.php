@@ -107,6 +107,7 @@ class PacketManager extends Thread{
 						$pk = new MoveEntityPacket();
 						$pk->entities = [$singleMoveData];
 					}
+					$pk->senderID = $singleMoveData[8];
 					$pk->encode($moveData["playerProtocol"]);
 					$moveStr .= Binary::writeVarInt(strlen($pk->buffer)) . $pk->buffer;
 				}
@@ -122,6 +123,7 @@ class PacketManager extends Thread{
 				foreach($motionData["data"] as $singleMotionData){
 					$pk = new SetEntityMotionPacket();
 					$pk->entities = [$singleMotionData];
+					$pk->senderID = $singleMotionData[4];
 					$pk->encode($motionData["playerProtocol"]);
 					$motionStr .= Binary::writeVarInt(strlen($pk->buffer)) . $pk->buffer;
 				}
