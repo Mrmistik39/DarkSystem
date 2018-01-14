@@ -22,7 +22,7 @@ use pocketmine\block\Mycelium;
 use pocketmine\block\Sapling;
 use pocketmine\block\SnowLayer;
 use pocketmine\block\Sugarcane;
-use pocketmine\entity\Arrow;
+use pocketmine\entity\projectile\Arrow;
 use pocketmine\entity\Entity;
 use pocketmine\entity\XPOrb;
 use pocketmine\entity\Lightning;
@@ -2082,7 +2082,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 			}
 		}
 		$this->server->getPluginManager()->callEvent(new ChunkLoadEvent($chunk, !$chunk->isGenerated()));
-		if(!$chunk->isLightPopulated() && $chunk->isPopulated() && $this->getServer()->getProperty("chunk-ticking.light-updates", false)){
+		if($chunk->isPopulated() && $this->getServer()->getProperty("chunk-ticking.light-updates", false)){
 			$this->getServer()->getScheduler()->scheduleAsyncTask(new LightPopulationTask($this, $chunk));
 		}
 		return true;
@@ -2440,7 +2440,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 		foreach($players as $p){
 			$this->chunkSendQueue[$index][spl_object_hash($p)] = $p;
 		}
-		$this->provider->requestChunkTask($x, $z);
+		$this->provider->requestChunkTask($x, $z);//requestChunkTask($x, $y, $protocols, $subClientID);
 	}
 	
 	public function getYMask(){
