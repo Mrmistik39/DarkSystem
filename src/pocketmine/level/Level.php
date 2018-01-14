@@ -512,33 +512,33 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	}
 	
 	/**
-	 * @param int $X
-	 * @param int $Z
+	 * @param int $x
+	 * @param int $z
 	 *
 	 * @return Player[]
 	 */
-	public function getUsingChunk($X, $Z){
-		return isset($this->usedChunks[$index = Level::chunkHash($X, $Z)]) ? $this->usedChunks[$index] : [];
+	public function getUsingChunk($x, $z){
+		return isset($this->usedChunks[$index = Level::chunkHash($x, $z)]) ? $this->usedChunks[$index] : [];
 	}
 
 	/**
-	 * @param int    $X
-	 * @param int    $Z
+	 * @param int    $x
+	 * @param int    $z
 	 * @param Player $player
 	 */
-	public function useChunk($X, $Z, Player $player){
-		$this->loadChunk($X, $Z);
-		$this->usedChunks[Level::chunkHash($X, $Z)][$player->getId()] = $player;
+	public function useChunk($x, $z, Player $player){
+		$this->loadChunk($x, $z);
+		$this->usedChunks[Level::chunkHash($x, $z)][$player->getId()] = $player;
 	}
 
 	/**
-	 * @param int    $X
-	 * @param int    $Z
+	 * @param int    $x
+	 * @param int    $z
 	 * @param Player $player
 	 */
-	public function freeChunk($X, $Z, Player $player){
-		unset($this->usedChunks[Level::chunkHash($X, $Z)][$player->getId()]);
-		$this->unloadChunkRequest($X, $Z, true);
+	public function freeChunk($x, $z, Player $player){
+		unset($this->usedChunks[Level::chunkHash($x, $z)][$player->getId()]);
+		$this->unloadChunkRequest($x, $z, true);
 	}
 	
 	public function checkTime(){
@@ -570,8 +570,8 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 			$this->weather->calcWeather($currentTick);
 		}
 		$this->unloadChunks();
-		$X = null;
-		$Z = null;
+		$x = null;
+		$z = null;
 		while($this->updateQueue->count() > 0 && $this->updateQueue->current()["priority"] <= $currentTick){
 			$block = $this->getBlock($this->updateQueue->extract()["data"]);
 			unset($this->updateQueueIndex[Level::blockHash($block->x, $block->y, $block->z)]);
@@ -593,18 +593,18 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 		if(count($this->changedCount) > 0){
 			if(count($this->players) > 0){
 				foreach($this->changedCount as $index => $mini){
-					for($Y = 0; $Y < 8; ++$Y){
-						if(($mini & (1 << $Y)) === 0){
+					for($y = 0; $y < 8; ++$y){
+						if(($mini & (1 << $y)) === 0){
 							continue;
 						}
-						if(count($this->changedBlocks[$index][$Y]) < 256){
+						if(count($this->changedBlocks[$index][$y]) < 256){
 							continue;
 						}else{
-							Level::getXZ($index, $X, $Z);
-							foreach($this->getUsingChunk($X, $Z) as $p){
-								$p->unloadChunk($X, $Z);
+							Level::getXZ($index, $x, $z);
+							foreach($this->getUsingChunk($x, $z) as $p){
+								$p->unloadChunk($x, $z);
 							}
-							unset($this->changedBlocks[$index][$Y]);
+							unset($this->changedBlocks[$index][$y]);
 						}
 					}
 				}
@@ -719,7 +719,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 			if($this->useSections){
 				foreach($chunk->getSections() as $section){
 					if(!($section instanceof EmptyChunkSection)){
-						$Y = $section->getY();
+						$y = $section->getY();
 						$k = mt_rand(0, 0x7fffffff);
 						for($i = 0; $i < 3; ++$i, $k >>= 10){
 							$x = $k & 0x0f;
@@ -730,7 +730,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 								$class = $this->randomTickBlocks[$blockId];
 								$block = new $class($section->getBlockData($x, $y, $z));
 								$block->x = $chunkX * 16 + $x;
-								$block->y = ($Y << 4) + $y;
+								$block->y = ($y << 4) + $y;
 								$block->z = $chunkZ * 16 + $z;
 								$block->level = $this;
 								$block->onUpdate(Level::BLOCK_UPDATE_RANDOM);
@@ -739,19 +739,19 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 					}
 				}
 			}else{
-				for($Y = 0; $Y < 8 && ($Y < 3 || $blockTest !== 0); ++$Y){
+				for($y = 0; $y < 8 && ($y < 3 || $blockTest !== 0); ++$y){
 					$blockTest = 0;
 					$k = mt_rand(0, 0x7fffffff);
 					for($i = 0; $i < 3; ++$i, $k >>= 10){
 						$x = $k & 0x0f;
 						$y = ($k >> 8) & 0x0f;
 						$z = ($k >> 16) & 0x0f;
-						$blockTest |= $blockId = $chunk->getBlockId($x, $y + ($Y << 4), $z);
+						$blockTest |= $blockId = $chunk->getBlockId($x, $y + ($y << 4), $z);
 						if(isset($this->randomTickBlocks[$blockId])){
 							$class = $this->randomTickBlocks[$blockId];
-							$block = new $class($chunk->getBlockData($x, $y + ($Y << 4), $z));
+							$block = new $class($chunk->getBlockData($x, $y + ($y << 4), $z));
 							$block->x = $chunkX * 16 + $x;
-							$block->y = ($Y << 4) + $y;
+							$block->y = ($y << 4) + $y;
 							$block->z = $chunkZ * 16 + $z;
 							$block->level = $this;
 							$block->onUpdate(Level::BLOCK_UPDATE_RANDOM);
@@ -1093,13 +1093,13 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 					$this->changedCount[$index] = 0;
 				}
 				
-				$Y = $pos->y >> 4;
-				if(!isset($this->changedBlocks[$index][$Y])){
-					$this->changedBlocks[$index][$Y] = [];
-					$this->changedCount[$index] |= 1 << $Y;
+				$y = $pos->y >> 4;
+				if(!isset($this->changedBlocks[$index][$y])){
+					$this->changedBlocks[$index][$y] = [];
+					$this->changedCount[$index] |= 1 << $y;
 				}
 				
-				$this->changedBlocks[$index][$Y][] = clone $block;
+				$this->changedBlocks[$index][$y][] = clone $block;
 			}
 
 			if($update){
@@ -1520,23 +1520,23 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	}
 
 	/**
-	 * @param int $X
-	 * @param int $Z
+	 * @param int $x
+	 * @param int $z
 	 *
 	 * @return Entity[]
 	 */
-	public function getChunkEntities($X, $Z){
-		return ($chunk = $this->getChunk($X, $Z)) !== null ? $chunk->getEntities() : [];
+	public function getChunkEntities($x, $z){
+		return ($chunk = $this->getChunk($x, $z)) !== null ? $chunk->getEntities() : [];
 	}
 
 	/**
-	 * @param int $X
-	 * @param int $Z
+	 * @param int $x
+	 * @param int $z
 	 *
 	 * @return Tile[]
 	 */
-	public function getChunkTiles($X, $Z){
-		return ($chunk = $this->getChunk($X, $Z)) !== null ? $chunk->getTiles() : [];
+	public function getChunkTiles($x, $z){
+		return ($chunk = $this->getChunk($x, $z)) !== null ? $chunk->getTiles() : [];
 	}
 
 	/**
@@ -1736,6 +1736,7 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 				unset($this->chunkPopulationLock[Level::chunkHash($x + $xx, $z + $zz)]);
 			}
 		}
+		
 		unset($this->chunkPopulationQueue[$index]);
 		unset($this->chunkGenerationQueue[$index]);
 		
@@ -2303,14 +2304,14 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 
 	public function doChunkGarbageCollection(){
 		if(!$this->isFrozen){
-			$X = null;
-			$Z = null;
+			$x = null;
+			$z = null;
 
 			foreach($this->chunks as $index => $chunk){
 				if(!isset($this->unloadQueue[$index]) && (!isset($this->usedChunks[$index]) || count($this->usedChunks[$index]) === 0)){
-					Level::getXZ($index, $X, $Z);
-					if(!$this->isSpawnChunk($X, $Z)){
-						$this->unloadChunkRequest($X, $Z, true);
+					Level::getXZ($index, $x, $z);
+					if(!$this->isSpawnChunk($x, $z)){
+						$this->unloadChunkRequest($x, $z, true);
 					}
 				}
 			}
@@ -2327,11 +2328,11 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 
 	protected function unloadChunks(){
 		if(count($this->unloadQueue) > 0 && !$this->isFrozen){
-			$X = null;
-			$Z = null;
+			$x = null;
+			$z = null;
 			foreach($this->unloadQueue as $index => $time){
-				Level::getXZ($index, $X, $Z);
-				if($this->unloadChunk($X, $Z, true)){
+				Level::getXZ($index, $x, $z);
+				if($this->unloadChunk($x, $z, true)){
 					unset($this->unloadQueue[$index]);
 				}
 			}
@@ -2432,15 +2433,25 @@ class Level extends TimeValues implements ChunkManager, Metadatable{
 	public function updateChunk($x, $z){
 		$players = $this->getUsingChunk($x, $z);
 		if(empty($players)){
-			return false;
+			return;
 		}
-		$index = Level::chunkHash($x, $z);
-		$this->chunkSendTasks[$index] = true;
+		$index = self::chunkHash($x, $z);
+		$this->chunkSendTasks[$index] = true;		
 		$this->chunkSendQueue[$index] = [];
-		foreach($players as $p){
-			$this->chunkSendQueue[$index][spl_object_hash($p)] = $p;
+		$protocols = [];
+		$subClientsId = [];
+		foreach($players as $player){
+			$this->chunkSendQueue[$index][spl_object_hash($player)] = $player;
+			$protocol = $player->getPlayerProtocol();
+			if(!isset($protocols[$protocol])){
+				$protocols[$protocol] = $protocol;
+			}
+			$subClientId = 0;
+			if(!isset($subClientsId[$subClientId])){
+				$subClientsId[$subClientId] = $subClientId;
+			}
 		}
-		$this->provider->requestChunkTask($x, $z);//requestChunkTask($x, $y, $protocols, $subClientID);
+		$this->provider->requestChunkTask($x, $z, $protocols, $subClientsId);
 	}
 	
 	public function getYMask(){
