@@ -57,9 +57,6 @@ namespace{
 namespace pocketmine{
 	
 	use darksystem\ThreadManager;
-	use darksystem\multicore\CoreWorker;
-	use darksystem\multicore\MultiCore;
-	use darksystem\darkbot\DarkBot;
 	use pocketmine\utils\MainLogger;
 	use pocketmine\utils\Terminal;
 	use pocketmine\utils\Utils;
@@ -68,7 +65,7 @@ namespace pocketmine{
 	const NAME = "DarkSystem";
 	const VERSION = "7.0";
 	const API_VERSION = "3.0.1";
-	const CODENAME = "Snowman";
+	const CODENAME = "ShiningPickaxe";
 	
 	function unlink(){
 		return true;
@@ -285,7 +282,13 @@ namespace pocketmine{
 		$thread->quit();
 	}
 	
-	$konsol->info("§cSunucu Durduruldu!");
+	if(Translate::checkTurkish() === "yes"){
+		$konsol->info("§cSunucu Durduruldu!");
+	}else{
+		$konsol->info("§cServer has been stopped!");
+	}
+	
 	$konsol->shutdown();
+	
 	exit(0);
 }
