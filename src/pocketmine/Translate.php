@@ -34,7 +34,7 @@ class Translate{
     	return $isTurkish;
     }
     
-    public static function getServer(){
+    public function getServer(){
     	return $this->server;
     }
     
